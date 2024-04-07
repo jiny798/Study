@@ -1,4 +1,4 @@
-package study.mvc.web;
+package study.mvc.web.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
