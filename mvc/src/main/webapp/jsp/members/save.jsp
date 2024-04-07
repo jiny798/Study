@@ -1,5 +1,5 @@
-<%@ page import="hello.servlet.domain.member.MemberRepository" %>
-<%@ page import="hello.servlet.domain.member.Member" %>
+<%@ page import="study.mvc.domain.member.MemberRepository" %>
+<%@ page import="study.mvc.domain.member.Member" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
 // JSP도 결국 서블릿으로 변환되어 실행되며, request, response는 내부에서 그냥 사용 가능
