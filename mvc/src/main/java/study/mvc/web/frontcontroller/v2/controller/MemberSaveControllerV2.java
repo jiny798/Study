@@ -13,6 +13,10 @@ import study.mvc.web.frontcontroller.v2.ControllerV2;
 public class MemberSaveControllerV2 implements ControllerV2 {
 	private MemberRepository memberRepository = MemberRepository.getInstance();
 
+	/*
+	 * 컨트롤러는 필요한 데이터만 받고, VIEW 보내면 되는데
+	 * HttpServletRequest, HttpServletResponse 가 필요한 것인가
+	 */
 	@Override
 	public MyView process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String username = request.getParameter("username");
