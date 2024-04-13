@@ -16,7 +16,11 @@ import study.mvc.web.frontcontroller.MyView;
 import study.mvc.web.frontcontroller.v3.controller.MemberFormControllerV3;
 import study.mvc.web.frontcontroller.v3.controller.MemberListControllerV3;
 import study.mvc.web.frontcontroller.v3.controller.MemberSaveControllerV3;
+import study.mvc.web.frontcontroller.v4.controller.MemberFormControllerV4;
+import study.mvc.web.frontcontroller.v4.controller.MemberListControllerV4;
+import study.mvc.web.frontcontroller.v4.controller.MemberSaveControllerV4;
 import study.mvc.web.frontcontroller.v5.adapter.ControllerV3HandlerAdapter;
+import study.mvc.web.frontcontroller.v5.adapter.ControllerV4HandlerAdapter;
 
 @WebServlet(name = "frontControllerServletV5", urlPatterns = "/front-controller/v5/*")
 public class FrontControllerServletV5 extends HttpServlet {
@@ -32,10 +36,16 @@ public class FrontControllerServletV5 extends HttpServlet {
 		handlerMappingMap.put("/front-controller/v5/v3/members/new-form", new MemberFormControllerV3());
 		handlerMappingMap.put("/front-controller/v5/v3/members/save", new MemberSaveControllerV3());
 		handlerMappingMap.put("/front-controller/v5/v3/members", new MemberListControllerV3());
+
+		// 다른 버전 핸들러 추가
+		handlerMappingMap.put("/front-controller/v5/v4/members/new-form", new MemberFormControllerV4());
+		handlerMappingMap.put("/front-controller/v5/v4/members/save", new MemberSaveControllerV4());
+		handlerMappingMap.put("/front-controller/v5/v4/members", new MemberListControllerV4());
 	}
 
 	private void initHandlerAdapters() {
 		handlerAdapters.add(new ControllerV3HandlerAdapter());
+		handlerAdapters.add(new ControllerV4HandlerAdapter()); // v4를 처리하는 어탭터도 추가
 	}
 
 	@Override
