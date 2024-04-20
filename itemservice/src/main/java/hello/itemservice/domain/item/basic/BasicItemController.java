@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import hello.itemservice.domain.item.Item;
 import hello.itemservice.domain.item.ItemRepository;
@@ -39,7 +40,7 @@ public class BasicItemController {
 	}
 
 	@GetMapping("/{itemId}")
-	public String item(@PathVariable Long itemId, Model model) {
+	public String item(@PathVariable("itemId") Long itemId, Model model) {
 		Item item = itemRepository.findById(itemId);
 		model.addAttribute("item", item);
 		return "basic/item";
@@ -69,11 +70,23 @@ public class BasicItemController {
 	 * model.addAttribute("item", item); 자동 추가
 	 * 필드명이 같다면 name 생략 가능, ModelAttribute 전체 생략은 부트3.0 이상에서 추가 설정 필요
 	 */
+	// @PostMapping("/add")
+	// public String addItemV2(@ModelAttribute("item") Item item, Model model) {
+	// 	itemRepository.save(item);
+	// 	//model.addAttribute("item", item); //자동 추가, 생략 가능
+	// 	// return "basic/item";
+	// 	return "redirect:/basic/items/" + item.getId();
+	// }
+
+	/**
+	 * RedirectAttributes
+	 */
 	@PostMapping("/add")
-	public String addItemV2(@ModelAttribute("item") Item item, Model model) {
-		itemRepository.save(item);
-		//model.addAttribute("item", item); //자동 추가, 생략 가능
-		return "basic/item";
+	public String addItemV6(@ModelAttribute Item item, RedirectAttributes redirectAttributes) {
+		Item savedItem = itemRepository.save(item);
+		redirectAttributes.addAttribute("itemId", savedItem.getId());
+		redirectAttributes.addAttribute("status", true);
+		return "redirect:/basic/items/{itemId}";
 	}
 
 	@GetMapping("/{itemId}/edit")
