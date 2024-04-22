@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="59a1331c-8db1-41f6-ac0a-5b550600c722" name="Changes" comment="v5 다른 버전을 처리하는 어탭터,컨트롤러 추가">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/MvcApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/domain/member/Member.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/domain/member/MemberRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/ModelView.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/MyView.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/v1/ControllerV1.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/v1/FrontControllerServletV1.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/v1/controller/MemberFormControllerV1.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/v1/controller/MemberListControllerV1.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/v1/controller/MemberSaveControllerV1.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/v2/ControllerV2.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/v2/FrontControllerServletV2.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/v2/controller/MemberFormControllerV2.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/v2/controller/MemberListControllerV2.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/v2/controller/MemberSaveControllerV2.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/v3/ControllerV3.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/v3/FrontControllerServletV3.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/v3/controller/MemberFormControllerV3.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/v3/controller/MemberListControllerV3.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/v3/controller/MemberSaveControllerV3.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/v4/ControllerV4.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/v4/FrontControllerServletV4.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/v4/controller/MemberFormControllerV4.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/v4/controller/MemberListControllerV4.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/v4/controller/MemberSaveControllerV4.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/v5/FrontControllerServletV5.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/v5/MyHandlerAdapter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/v5/adapter/ControllerV3HandlerAdapter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/frontcontroller/v5/adapter/ControllerV4HandlerAdapter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/servlet/MemberFormServlet.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/servlet/MemberListServlet.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/servlet/MemberSaveServlet.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/servletmvc/MvcMemberFormServlet.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/servletmvc/MvcMemberListServlet.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/study/mvc/web/servletmvc/MvcMemberSaveServlet.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/members.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/new-form.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/save-result.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/jsp/members.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/jsp/members/new-form.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/jsp/members/save.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/study/mvc/MvcApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/study/mvc/domain/member/MemberRepositoryTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../springmvc/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../springmvc/build.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../springmvc/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../springmvc/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../springmvc/gradlew" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../springmvc/gradlew.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../springmvc/settings.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../springmvc/src/main/java/hello/springmvc/SpringmvcApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../springmvc/src/main/java/hello/springmvc/basic/LogTestController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../springmvc/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../springmvc/src/main/resources/static/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../springmvc/src/test/java/hello/springmvc/SpringmvcApplicationTests.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="mvc" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JUnit5 Test Class" />
+        <option value="HTML File" />
+        <option value="Class" />
+        <option value="Interface" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2eiPgJH6ea8lHYafydrMn2MCPOt" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "last_opened_file_path": "C:/study/spring/spring/mvc-first/build.gradle",
+    "settings.editor.selected.configurable": "configurable.group.appearance"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="study.mvc.domain.member" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.MvcApplication">
+    <configuration name="MvcApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="study.mvc.MvcApplication" />
+      <module name="mvc.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="study.mvc.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MemberRepositoryTest.save" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;study.mvc.domain.member.MemberRepositoryTest.save&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.MvcApplication" />
+        <item itemvalue="Gradle.MemberRepositoryTest.save" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="59a1331c-8db1-41f6-ac0a-5b550600c722" name="Changes" comment="" />
+      <created>1712384534438</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1712384534438</updated>
+    </task>
+    <task id="LOCAL-00001" summary="서블릿 웹 애플리케이션">
+      <created>1712395685055</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1712395685055</updated>
+    </task>
+    <task id="LOCAL-00002" summary="추가 파일">
+      <created>1712395757713</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1712395757713</updated>
+    </task>
+    <task id="LOCAL-00003" summary="JSP 웹 애플리케이션">
+      <created>1712396792059</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1712396792059</updated>
+    </task>
+    <task id="LOCAL-00004" summary="JSP 웹 애플리케이션 수정">
+      <created>1712462623630</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1712462623630</updated>
+    </task>
+    <task id="LOCAL-00005" summary="MVC 패턴 적용 &#10;- 서블릿 컨트롤러, JSP VIEW로 분리&#10;- 컨트롤러가 여러개 나누어져 있어 중복이 많은 문제 발생">
+      <created>1712463674379</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1712463674379</updated>
+    </task>
+    <task id="LOCAL-00006" summary="프론트 컨트롤러 적용&#10;- 앞단에 서블릿 컨트롤러가 요청 받음&#10;- URL에 따라 적절한 자바 컨트롤러가 로직을 처리">
+      <created>1712465092518</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1712465092518</updated>
+    </task>
+    <task id="LOCAL-00007" summary="프론트 컨트롤러 + View 처리 객체 분리&#10;- 앞단에 서블릿 컨트롤러가 요청 받고, url에 따라 자바 컨트롤러 호출&#10;- 자바 컨트롤러가 로직을 처리하고 View 반환&#10;- 프론트 컨트롤러의 도입으로 MyView 객체의 render() 를 호출하는 부분을 모두 일관되게 처리">
+      <created>1712500502176</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1712500502176</updated>
+    </task>
+    <task id="LOCAL-00008" summary="v2 설명 추가">
+      <created>1712760071875</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1712760071875</updated>
+    </task>
+    <task id="LOCAL-00009" summary="ModelView 도입 - v3">
+      <created>1712761145269</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1712761145270</updated>
+    </task>
+    <task id="LOCAL-00010" summary="v4 뷰 논리 이름만 반환하고, 뷰리졸버 도입">
+      <created>1712847608626</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1712847608626</updated>
+    </task>
+    <task id="LOCAL-00011" summary="v5 여러 종류의 컨트롤러(핸들러)를 처리할 수 있도록 어탭터 도입">
+      <created>1712984749339</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1712984749339</updated>
+    </task>
+    <task id="LOCAL-00012" summary="v5 다른 버전을 처리하는 어탭터,컨트롤러 추가">
+      <created>1712985608649</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1712985608649</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="서블릿 웹 애플리케이션" />
+    <MESSAGE value="추가 파일" />
+    <MESSAGE value="JSP 웹 애플리케이션" />
+    <MESSAGE value="JSP 웹 애플리케이션 수정" />
+    <MESSAGE value="MVC 패턴 적용 &#10;- 서블릿 컨트롤러, JSP VIEW로 분리&#10;- 컨트롤러가 여러개 나누어져 있어 중복이 많은 문제 발생" />
+    <MESSAGE value="프론트 컨트롤러 적용&#10;- 앞단에 서블릿 컨트롤러가 요청 받음&#10;- URL에 따라 적절한 자바 컨트롤러가 로직을 처리" />
+    <MESSAGE value="프론트 컨트롤러 + View 처리 객체 분리&#10;- 앞단에 서블릿 컨트롤러가 요청 받고, url에 따라 자바 컨트롤러 호출&#10;- 자바 컨트롤러가 로직을 처리하고 View 반환&#10;- 프론트 컨트롤러의 도입으로 MyView 객체의 render() 를 호출하는 부분을 모두 일관되게 처리" />
+    <MESSAGE value="v2 설명 추가" />
+    <MESSAGE value="ModelView 도입 - v3" />
+    <MESSAGE value="v4 뷰 논리 이름만 반환하고, 뷰리졸버 도입" />
+    <MESSAGE value="v5 여러 종류의 컨트롤러(핸들러)를 처리할 수 있도록 어탭터 도입" />
+    <MESSAGE value="v5 다른 버전을 처리하는 어탭터,컨트롤러 추가" />
+    <option name="LAST_COMMIT_MESSAGE" value="v5 다른 버전을 처리하는 어탭터,컨트롤러 추가" />
+  </component>
+</project>
