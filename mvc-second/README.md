@@ -177,6 +177,21 @@ public class MemberSaveControllerV3 implements ControllerV3 {
 <br>
 
 그럼 이 프론트 컨트롤러는 ModelView 를 받게되고, 프론트 컨트롤러는 이전에 만든 MyView를 통해 처리한다.
+```java
+// FrontControllerServletV3
+    ...(생략) ...
+    
+    Map<String, String> paramMap = createParamMap(request);
+
+    ModelView mv = controller.process(paramMap);
+	
+    String viewName = mv.getViewName();
+    MyView view = viewResolver(viewName);
+	
+    view.render(mv.getModel(), request, response);
+
+```
+
 
 ```java
 private MyView viewResolver(String viewName) {
@@ -185,5 +200,47 @@ private MyView viewResolver(String viewName) {
 ```
 이후 MyView의 render를 통해 view로 이동한다.
 
+<br>
 
+### [4단계] Model, ViewResolver 의 등장
+3단계의 컨트롤러(핸들러)들은 필요한 데이터만 map으로 받고, ModelView 를 만들어 반환하였다.
+데이터를 처리하는 것 까지는 좋지만, ModelView를 만들어 보내는 것이 약간은 번거롭다.
 
+```java
+public interface ControllerV4 {
+	String process(Map<String, String> paramMap, Map<String, Object> model);
+}
+```
+
+```java
+public class MemberSaveControllerV4 implements ControllerV4 {
+    private MemberRepository memberRepository = MemberRepository.getInstance();
+	
+    @Override
+    public String process(Map<String, String> paramMap, Map<String, Object> model) {
+        String username = paramMap.get("username");
+        int age = Integer.parseInt(paramMap.get("age"));
+	
+        Member member = new Member(username, age);
+        memberRepository.save(member);
+	
+        model.put("member", member);
+        return "save-result";
+ }
+}
+```
+
+model을 파라미터로 받아, ModelView 에 Model을 넣어줄 필요도 없다.
+그리고 view만 프론트컨트롤러가 받아 처리해주면 된다.
+
+```java
+
+//FrontControllerServletV4
+... 생략 
+    
+    String viewName = controller.process(paramMap, model);
+
+    MyView view = viewResolver(viewName);
+    view.render(model, request, response);
+
+```
