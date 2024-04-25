@@ -244,3 +244,169 @@ model을 파라미터로 받아, ModelView 에 Model을 넣어줄 필요도 없�
     view.render(model, request, response);
 
 ```
+
+### [5단계] 다양한 컨트롤러의 지원 - 어탭터 패턴
+
+컨트롤러V3 는 ModelView를 반환하고, 파라미터를 Map으로 받는다.
+컨트롤러V4 는 View 이름만 반환하고, 파라미터와 Model 을 인자로 받는다.
+
+```java
+public interface ControllerV3 {
+    ModelView process(Map<String, String> paramMap);
+}
+```
+```java
+public interface ControllerV4 {
+    String process(Map<String, String> paramMap, Map<String, Object> model);
+}
+```
+
+지금까지 만든 프론트 컨트롤러는 요청이 들어오면 아래처럼
+요청 URI에 따라 V4 컨트롤러만 사용 가능하다.
+```java
+    private Map<String, ControllerV4> controllerMap = new HashMap<>();
+    ... 생략
+
+    @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response)
+	    String requestURI = request.getRequestURI();
+	    ControllerV4 controller = controllerMap.get(requestURI);
+        
+            ...(생략)
+	}
+```
+
+컨트롤러V3,V4 를 모두 사용하도록 어탭터 패턴을 도입한다.
+
+```java
+public interface MyHandlerAdapter {
+    boolean supports(Object handler);
+	
+    ModelView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServletException, IOException;
+}
+```
+
+- Object handler 는 컨트롤러가 들어온다.
+- supports() 는 해당 어탭터가 컨트롤러를 처리할 수 있는지 물어본다.
+- handle() 은 무조건 ModelView를 반환한다. 컨트롤러 V4처럼 String 만 반환한다면,
+직접 ModelView 만들도록 해야한다.
+
+<br>
+
+```java
+public class ControllerV3HandlerAdapter implements MyHandlerAdapter {
+    @Override
+    public boolean supports(Object handler) {
+        return (handler instanceof ControllerV3);
+        // V3 컨트롤러면 처리할 수 있으니 TRUE 를 반환한다.
+    }
+	
+    @Override
+    public ModelView handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+		
+        //supports 를 통해 검증했기 때문에 컨트롤러 V3로 변환한다.
+        ControllerV3 controller = (ControllerV3) handler;
+        Map<String, String> paramMap = createParamMap(request);
+		
+        //컨트롤러 처리가 끝나고 ModelView를 반환한다.
+        ModelView mv = controller.process(paramMap);
+        return mv;
+    }
+	
+    private Map<String, String> createParamMap(HttpServletRequest request) {
+        Map<String, String> paramMap = new HashMap<>();
+		
+        request.getParameterNames().asIterator()
+                        .forEachRemaining(paramName -> paramMap.put(paramName, request.getParameter(paramName)));
+        return paramMap;
+    }
+}
+
+```
+<br>
+
+String 만 반환하는 V4도 다르지 않다. handle 부분만 보자
+```java
+ @Override
+ public ModelView handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+ 
+    ControllerV4 controller = (ControllerV4) handler;
+    Map<String, String> paramMap = createParamMap(request);
+    Map<String, Object> model = new HashMap<>();
+	
+    String viewName = controller.process(paramMap, model);
+
+    ModelView mv = new ModelView(viewName);
+    mv.setModel(model);
+
+    return mv;
+ }
+```
+String 을 받아 어댑터에서 직접 ModelView 를 만들어 프로트 컨트롤러에게 전달한다.
+
+### 프론트 컨트롤러 전체 코드
+
+```java
+@WebServlet(name = "frontControllerServletV5", urlPatterns = "/front-controller/v5/*")
+public class FrontControllerServletV5 extends HttpServlet {
+	private final Map<String, Object> handlerMappingMap = new HashMap<>();
+	private final List<MyHandlerAdapter> handlerAdapters = new ArrayList<>();
+
+	public FrontControllerServletV5() {
+		initHandlerMappingMap();
+		initHandlerAdapters();
+	}
+
+	private void initHandlerMappingMap() {
+		handlerMappingMap.put("/front-controller/v5/v3/members/new-form", new MemberFormControllerV3());
+		handlerMappingMap.put("/front-controller/v5/v3/members/save", new MemberSaveControllerV3());
+		handlerMappingMap.put("/front-controller/v5/v3/members", new MemberListControllerV3());
+
+		// 다른 버전 핸들러 추가
+		handlerMappingMap.put("/front-controller/v5/v4/members/new-form", new MemberFormControllerV4());
+		handlerMappingMap.put("/front-controller/v5/v4/members/save", new MemberSaveControllerV4());
+		handlerMappingMap.put("/front-controller/v5/v4/members", new MemberListControllerV4());
+	}
+
+	private void initHandlerAdapters() {
+		handlerAdapters.add(new ControllerV3HandlerAdapter());
+		handlerAdapters.add(new ControllerV4HandlerAdapter()); // v4를 처리하는 어탭터도 추가
+	}
+
+	@Override
+	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Object handler = getHandler(request);
+		if (handler == null) {
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
+		MyHandlerAdapter adapter = getHandlerAdapter(handler);
+		ModelView mv = adapter.handle(request, response, handler);
+		MyView view = viewResolver(mv.getViewName());
+		view.render(mv.getModel(), request, response);
+	}
+
+	private Object getHandler(HttpServletRequest request) {
+		String requestURI = request.getRequestURI();
+		return handlerMappingMap.get(requestURI);
+	}
+
+	private MyHandlerAdapter getHandlerAdapter(Object handler) {
+		for (MyHandlerAdapter adapter : handlerAdapters) {
+			if (adapter.supports(handler)) {
+				return adapter;
+			}
+		}
+		throw new IllegalArgumentException("handler adapter를 찾을 수 없습니다. handler = " + handler);
+	}
+
+	private MyView viewResolver(String viewName) {
+		return new MyView("/WEB-INF/views/" + viewName + ".jsp");
+	}
+}
+
+```
+
+스프링 프레임워크처럼 어떤 컨트롤러든 받아 처리할 수 있게 되었다.
+
+애노테이션이 붙은 컨트롤러, 특정 클래스를 상속받는 컨트롤러 어떤 것이든 상관없다.
