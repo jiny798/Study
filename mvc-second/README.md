@@ -410,3 +410,8 @@ public class FrontControllerServletV5 extends HttpServlet {
 스프링 프레임워크처럼 어떤 컨트롤러든 받아 처리할 수 있게 되었다.
 
 애노테이션이 붙은 컨트롤러, 특정 클래스를 상속받는 컨트롤러 어떤 것이든 상관없다.
+
+
+
+[참고]
+[인프런 백엔드 웹 개발 핵심 기술](https://www.inflearn.com/course/lecture?courseSlug=%EC%8A%A4%ED%94%84%EB%A7%81-mvc-1&unitId=71233)
