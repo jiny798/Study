@@ -2,20 +2,27 @@
 
 - 서버로 요청 데이터 전달 시, 주로 3가지 방법을 사용한다.
 
-## 1. GET - 쿼리 파라미터
+### [목차]
+1. GET - 쿼리 파라미터
+2. POST - HTML Form
+3. HTTP message body에 데이터를 직접 담아서 요청 <br>
+3-1. HTTP 요청 메시지 - JSON
+
+
+## 방법1. GET - 쿼리 파라미터
 
 - "/url명?param1=jin&param2=young"
 - URL 에 파라미터를 넣어 요청한다.
 - 데이터를 요청하는 경우에 사용된다.
 
-## 2. POST - HTML Form
+## 방법2. POST - HTML Form
 - HTML의 form 태그를 사용하여 데이터를 전달하는 방식
 - HTTP 헤더 중 content-type 이  application/x-www-form-urlencoded 으로 지정된다.
 
 <br>
 
 
-### [요청 예시] 
+### [요청 예시] 방법1, 방법2
 
 #### 1. GET - 쿼리 파라미터
 
@@ -43,7 +50,7 @@ public String mappingHeader() {
 
 <br>
 
-### [서버에서 쿼리파라미터, FORM 요청 처리]
+### [서버에서 처리 방법]
 
 ####  1. 서블릿 객체에서 제공하는 파라미터 조회 메서드 사용
 ```java
@@ -134,11 +141,120 @@ public String modelAttributeV2(HelloData helloData) {
 - 값타입(String,int 등) 은 @RequestParam 으로 작동 
 - 나머지는 @ModelAttribute 로 작동
 
-## 3. HTTP message body에 데이터를 직접 담아서 요청
+<br>
+
+## 방법3. HTTP message body에 데이터를 직접 담아서 요청한 경우 
 - HTTP API에서 주로 사용, JSON, XML, TEXT
 - 데이터 형식은 주로 JSON 사용
 - POST, PUT, PATCH
 
+### [서버에서 처리 방법]
+
+### 1. InputStream 사용해서 직접 읽기
+
+```java
+@PostMapping("/request-body-string-v1")
+public void requestBodyString(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	ServletInputStream inputStream = request.getInputStream();
+	
+	String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+	
+	log.info("messageBody={}", messageBody);
+	response.getWriter().write("ok");
+}
+```
+- InputStream 을 통해 HTTP Body 내용을 직접 읽는다.
+- 넘어온 데이터는 바이트 코드이기 때문에 인코딩 타입을 전달해주어 올바른 값을 읽어올 수 있도록 한다.
+
+### 2. HttpEntity 사용 
+```java
+@PostMapping("/request-body-string-v3")
+public HttpEntity<String> requestBodyStringV3(HttpEntity<String> httpEntity) {
+	String messageBody = httpEntity.getBody();
+	log.info("messageBody={}", messageBody);
+	return new HttpEntity<>("ok");
+}
+```
+- HTTP header, body 정보를 편리하게 조회 가능
+- HttpEntity는 응답에도 사용 가능
+- StringHttpMessageConverter 가 이를 처리해준다. 
+
+### 3. @RequestBody 사용 
+```java
+@ResponseBody
+@PostMapping("/request-body-string-v4")
+public String requestBodyStringV4(@RequestBody String messageBody) {
+	log.info("messageBody={}", messageBody);
+	return "ok";
+}
+```
+- HTTP 메시지 바디 정보를 가져온다.
+- 헤더 정보는 @RequestHeader 를 사용하면 된다.
+
+---------------------------------------------
+
+[정리]
+#### 요청 파라미터를 조회하는 기능: @RequestParam , @ModelAttribute
+#### HTTP 메시지 바디를 직접 조회하는 기능: @RequestBody
 
 
+## 3-1. HTTP 요청 메시지 - JSON
 
+### 1. ObjectMapper 사용
+```java
+private ObjectMapper objectMapper = new ObjectMapper();
+@PostMapping("/request-body-json-v1")
+public void requestBodyJsonV1(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	ServletInputStream inputStream = request.getInputStream();
+	String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+	log.info("messageBody={}", messageBody);
+
+	HelloData data = objectMapper.readValue(messageBody, HelloData.class);
+	log.info("username={}, age={}", data.getUsername(), data.getAge());
+
+	response.getWriter().write("ok");
+}
+```
+- 메시지 바디를 읽어 messageBody 로 변환
+- 그리고 Jackson 라이브러리인 objectMapper를 사용해서 자바 객체로 변환
+
+### 2. @RequestBody와 ObjectMapper 사용 
+```java
+@ResponseBody
+@PostMapping("/request-body-json-v2")
+public String requestBodyJsonV2(@RequestBody String messageBody) throws IOException {
+	HelloData data = objectMapper.readValue(messageBody, HelloData.class);
+	log.info("username={}, age={}", data.getUsername(), data.getAge());
+	return "ok";
+}
+```
+- @RequestBody 를 사용해 바로 문자열을 가져오고
+- objectMapper.readValue() 를 통해 자바 객체로 변환
+
+### 3. @RequestBody 객체 변환
+
+```java
+@ResponseBody
+@PostMapping("/request-body-json-v3")
+public String requestBodyJsonV3(@RequestBody HelloData data) {
+	log.info("username={}, age={}", data.getUsername(), data.getAge());
+	return "ok";
+}
+```
+- @RequestBody 를 사용하면 HTTP 메시지 컨버터가 HTTP 메시지 바디의 내용을 우리가 원하는 문
+  자나 객체 등으로 변환해준다.
+
+### 4. @RequestBody 객체 변환 + @ResponseBody 로 객체 응답 
+```java
+@ResponseBody
+@PostMapping("/request-body-json-v5")
+public HelloData requestBodyJsonV5(@RequestBody HelloData data) {
+	log.info("username={}, age={}", data.getUsername(), data.getAge());
+	return data;
+}
+```
+
+- @RequestBody 요청  <br>
+JSON 요청 > HTTP 메시지 컨버터 > 객체 
+- @ResponseBody 응답 <br>
+객체 > HTTP 메시지 컨버터 > JSON 응답 <br>
