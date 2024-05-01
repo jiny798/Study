@@ -6,7 +6,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import hello.itemservice.domain.item.Item;
 import hello.itemservice.domain.item.ItemRepository;
+import hello.itemservice.domain.validation.ItemValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,6 +28,14 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ValidationItemControllerV2 {
 	private final ItemRepository itemRepository;
+
+	private final ItemValidator itemValidator;
+
+	@InitBinder // @InitBinder 해당 컨트롤러에만 영향을 준다. 글로벌 설정은 별도로 해야한다.
+	public void init(WebDataBinder dataBinder) {
+		log.info("init binder {}", dataBinder);
+		dataBinder.addValidators(itemValidator);
+	}
 
 	// BindingResult FieldError ObjectError 사용
 	// @PostMapping("/add")
@@ -156,6 +168,42 @@ public class ValidationItemControllerV2 {
 					resultPrice}, null);
 			}
 		}
+		if (bindingResult.hasErrors()) {
+			log.info("errors={}", bindingResult);
+			return "validation/v2/addForm";
+		}
+		//성공 로직
+		Item savedItem = itemRepository.save(item);
+		redirectAttributes.addAttribute("itemId", savedItem.getId());
+		redirectAttributes.addAttribute("status", true);
+		return "redirect:/validation/v2/items/{itemId}";
+	}
+
+
+	//검증기 직접 추가
+	// @PostMapping("/add")
+	public String addItemV5(@ModelAttribute Item item, BindingResult bindingResult,
+		RedirectAttributes redirectAttributes) {
+		itemValidator.validate(item, bindingResult);
+
+		if (bindingResult.hasErrors()) {
+			log.info("errors={}", bindingResult);
+			return "validation/v2/addForm";
+		}
+		//성공 로직
+		Item savedItem = itemRepository.save(item);
+		redirectAttributes.addAttribute("itemId", savedItem.getId());
+		redirectAttributes.addAttribute("status", true);
+		return "redirect:/validation/v2/items/{itemId}";
+	}
+
+	// Validated -> WebDataBinder 에 등록한 검증기를 찾아서 실행한다
+	// 그런데 여러 검증기를 등록한다
+	// 면 그 중에 어떤 검증기가 실행되어야 할지 구분이 필요하다. 이때 supports() 가 사용된다. 여기서는
+	// supports(Item.class) 호출되고, 결과가 true 이므로 ItemValidator 의 validate() 가 호출된다
+	 @PostMapping("/add")
+	public String addItemV6(@Validated @ModelAttribute Item item, BindingResult
+		bindingResult, RedirectAttributes redirectAttributes) {
 		if (bindingResult.hasErrors()) {
 			log.info("errors={}", bindingResult);
 			return "validation/v2/addForm";
