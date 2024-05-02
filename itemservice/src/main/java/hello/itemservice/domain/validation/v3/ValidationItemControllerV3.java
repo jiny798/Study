@@ -30,15 +30,23 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ValidationItemControllerV3 {
 	private final ItemRepository itemRepository;
-
-	// private final ItemValidator itemValidator;
-	//
-	// @InitBinder // @InitBinder 해당 컨트롤러에만 영향을 준다. 글로벌 설정은 별도로 해야한다.
-	// public void init(WebDataBinder dataBinder) {
-	// 	log.info("init binder {}", dataBinder);
-	// 	dataBinder.addValidators(itemValidator);
-	// }
-
+	@GetMapping
+	public String items(Model model) {
+		List<Item> items = itemRepository.findAll();
+		model.addAttribute("items", items);
+		return "validation/v3/items";
+	}
+	@GetMapping("/{itemId}")
+	public String item(@PathVariable long itemId, Model model) {
+		Item item = itemRepository.findById(itemId);
+		model.addAttribute("item", item);
+		return "validation/v3/item";
+	}
+	@GetMapping("/add")
+	public String addForm(Model model) {
+		model.addAttribute("item", new Item());
+		return "validation/v3/addForm";
+	}
 	@PostMapping("/add")
 	public String addItem(@Validated @ModelAttribute Item item, BindingResult
 		bindingResult, RedirectAttributes redirectAttributes) {
@@ -52,23 +60,15 @@ public class ValidationItemControllerV3 {
 		redirectAttributes.addAttribute("status", true);
 		return "redirect:/validation/v3/items/{itemId}";
 	}
-
-	@GetMapping
-	public String items(Model model) {
-		List<Item> items = itemRepository.findAll();
-		model.addAttribute("items", items);
-		return "validation/v3/items";
-	}
-
-	@GetMapping("/{itemId}")
-	public String item(@PathVariable("itemId") Long itemId, Model model) {
+	@GetMapping("/{itemId}/edit")
+	public String editForm(@PathVariable Long itemId, Model model) {
 		Item item = itemRepository.findById(itemId);
 		model.addAttribute("item", item);
-		return "validation/v3/item";
+		return "validation/v3/editForm";
 	}
-
-	@GetMapping("/add")
-	public String addForm(@ModelAttribute Item item) {
-		return "validation/v3/addForm";
+	@PostMapping("/{itemId}/edit")
+	public String edit(@PathVariable Long itemId, @ModelAttribute Item item) {
+		itemRepository.update(itemId, item);
+		return "redirect:/validation/v3/items/{itemId}";
 	}
 }
