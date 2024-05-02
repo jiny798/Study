@@ -60,3 +60,57 @@ public ObjectError(String objectName, String defaultMessage) {}
 - #fields : #fields.hasGlobalErrors() 로 BindingResult 가 제공하는 검증 오류에 접근할 수 있다.
 - th:errors : 해당 필드에 오류가 있는 경우에 태그를 출력한다. (th:if와 유사)
 - th:errorclass : th:field 에서 지정한 필드에 오류가 있으면 class 정보를 추가한다
+
+<br>
+
+### 2. BindingResult2
+
+1단계에서 객체 필드를 직접 검수하고, 검증 오류가 생기면 BindingResult에 FieldError를 직접 추가했다.
+
+그런데 그전에 @ModelAttribute에 바인딩 시 타입 오류가 발생한다면 어떻게 될까
+
+- BindingResult 가 없다면 400 에러 페이지를 보내고,
+- BindingResult 가 있다면 스프링이 직접 오류 정보( FieldError )를 BindingResult 에 담아서 컨트롤러를 정상 호출한다.
+
+- 그리고 BindingResult 는 Model에 자동으로 포함된다.
+
+### 3. 오류 코드와 메시지 처리 1
+
+FieldError는 오류 메시지를 사용하기 위해 생성자를 하나 더 제공한다.
+
+```java
+public FieldError(String objectName, String field, String defaultMessage);
+public FieldError(String objectName, String field, @Nullable Object
+rejectedValue, boolean bindingFailure, @Nullable String[] codes, @Nullable
+Object[] arguments, @Nullable String defaultMessage)
+```
+- objectName : 오류가 발생한 객체 이름
+- field : 오류 필드
+- rejectedValue : 사용자가 입력한 값(거절된 값)
+- bindingFailure : 타입 오류 같은 바인딩 실패인지, 검증 실패인지 구분 값
+- codes : 메시지 코드
+- arguments : 메시지에서 사용하는 인자
+- defaultMessage : 기본 오류 메시지
+
+```properties
+# application.properties
+spring.messages.basename=messages,errors
+```
+```properties
+# errors.properties
+required.item.itemName=상품 이름은 필수입니다.
+range.item.price=가격은 {0} ~ {1} 까지 허용합니다.
+max.item.quantity=수량은 최대 {0} 까지 허용합니다.
+totalPriceMin=가격 * 수량의 합은 {0}원 이상이어야 합니다. 현재 값 = {1}
+```
+
+위와 같이 error 코드가 저장되어 있다면
+```java
+new FieldError("item", "price", item.getPrice(), false, new String[]
+{"range.item.price"}, new Object[]{1000, 1000000}
+```
+
+5번째 인자로 range.item.price 코드가 전달되었다.
+range.item.price 를 찾아 매칭되는 메시지를 사용한다. 그리고 new Object[]{1000, 1000000} 의 값이 {0},{1} 로 들어간다.
+
+### 오류 코드와 메시지 처리 2
