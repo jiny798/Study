@@ -187,3 +187,32 @@ MessageCodesResolver 를 통해서 생성된 순서대로 FieldError , ObjectErr
 <br>
 
 ### MessageCodesResolver 를 이용한 오류 코드, 메시지 처리
+
+itemName 의 경우 required 검증 오류 메시지가 발생하면 다음처럼 rejectValue 실행
+
+```java
+if (!StringUtils.hasText(item.getItemName())) {
+ bindingResult.rejectValue("itemName", "required", "기본: 상품 이름은 필수입니다.");
+}
+```
+
+MessageCodesResolver 에 의해 다음 코드 순서로 메시지 생성
+1. required.item.itemName
+2. required.itemName
+3. required.java.lang.String
+4. required
+
+이렇게 생성된 메시지 코드를 기반으로 순서대로 MessageSource 에서 메시지에서 찾는다.
+
+```properties
+#LEVEL1 가장 우선순위 높은 
+required.item.itemName=상품 이름은 필수입니다
+
+#LEVEL3
+required.java.lang.String = 필수 문자입니다.
+required.java.lang.Integer = 필수 숫자입니다.
+
+#LEVEL4
+required = 필수 값 입니다.
+```
+
