@@ -113,4 +113,77 @@ new FieldError("item", "price", item.getPrice(), false, new String[]
 5번째 인자로 range.item.price 코드가 전달되었다.
 range.item.price 를 찾아 매칭되는 메시지를 사용한다. 그리고 new Object[]{1000, 1000000} 의 값이 {0},{1} 로 들어간다.
 
-### 오류 코드와 메시지 처리 2
+### 4. 오류 코드와 메시지 처리 2 (rejectValue() , reject())
+FieldError , ObjectError 를 사용하지 않고, <br>
+BindingResult 가 제공하는 rejectValue() , reject() 를 사용할 수 있다.
+
+```java
+void rejectValue(@Nullable String field, String errorCode, 
+                    @Nullable Object[] errorArgs, @Nullable String defaultMessage);
+```
+- field : 오류 필드
+- errorCode : messageResolver 에서 사용하는 코드
+- errorArgs : 오류 메세지 {숫자} 를 치환하기 위한 값
+- defaultMessage : 오류 기본 메세지
+
+```java
+bindingResult.rejectValue("price", "range", new Object[]{1000, 1000000}, null)
+```
+FieldError() 를 사용할 때는 오류 코드를 "range.item.price" 이런식으로 명시해줘야 한다.
+
+하지만 rejectValue 에 전체 코드가 없는데 해당 메세지를 찾을 수 있다.
+
+스프링은 MessageCodesResolver 라는 것으로 이러한 기능을 지원한다.
+
+<br>
+
+### 5. MessageCodesResolver
+
+```java
+	MessageCodesResolver codesResolver = new DefaultMessageCodesResolver();
+
+	@Test
+	void messageCodesResolverObject() {
+		String[] messageCodes = codesResolver.resolveMessageCodes("required", "item");
+        // errorCode -> required
+        // objectName -> item
+
+		assertThat(messageCodes).containsExactly("required.item", "required");
+	}
+
+	@Test
+	void messageCodesResolverField() {
+		String[] messageCodes = codesResolver.resolveMessageCodes("required",
+			"item", "itemName", String.class);
+        // errorCode -> required
+        // objectName -> item
+        // field itemName
+		assertThat(messageCodes).containsExactly(
+			"required.item.itemName",
+			"required.itemName",
+			"required.java.lang.String",
+			"required"
+		);
+	}
+```
+- 에러코드,objectName만 있는 객체 오류는 다음 순서로 2가지 생성 <br>
+1.: code + "." + object name <br>
+2.: code <br>
+
+- 필드 오류는 4가지 생성 <br>
+  1.: code + "." + object name + "." + field <br>
+  2.: code + "." + field <br>
+  3.: code + "." + field type <br>
+  4.: code <br>
+
+<br>
+BindingResult 의 rejectValue() , reject() 는 내부에서 MessageCodesResolver 를 사용
+
+FieldError , ObjectError 의 생성자를 보면 오류 코드를 여러개 저장할 수 있으며,
+
+MessageCodesResolver 를 통해서 생성된 순서대로 FieldError , ObjectError 에 저장
+
+
+<br>
+
+### MessageCodesResolver 를 이용한 오류 코드, 메시지 처리
