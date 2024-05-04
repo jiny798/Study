@@ -186,7 +186,7 @@ MessageCodesResolver 를 통해서 생성된 순서대로 FieldError , ObjectErr
 
 <br>
 
-### MessageCodesResolver 를 이용한 오류 코드, 메시지 처리
+### 6. MessageCodesResolver 를 이용한 오류 코드, 메시지 처리
 
 itemName 의 경우 required 검증 오류 메시지가 발생하면 다음처럼 rejectValue 실행
 
@@ -216,3 +216,110 @@ required.java.lang.Integer = 필수 숫자입니다.
 required = 필수 값 입니다.
 ```
 
+### 7. 스프링에서 제공하는 오류메시지 처리
+
+rejectValue() 는 개발자가 직접 오류 코드를 설정하는 것이다. <br>
+그럼 int 형에 String 타입이 들어가는 타입 오류같은 경우도 개발자가 직접 오류 코드를 설정해줘야 할까
+
+스프링이 직접 에러 코드를 BindingResult에 추가해둔다.
+
+EX. int price 필드에 "ABC" 문자열이 추가된다면 아래의 메시지 에러 코드가 생성된다
+
+- typeMismatch.item.price
+- typeMismatch.price
+- typeMismatch.java.lang.Integer
+- typeMismatch
+
+그래서 error.properties 에 해당 코드를 추가하면 에러 메시지를 변경할 수 있다.
+
+```properties
+# 우선순위 높음
+typeMismatch.java.lang.Integer=숫자를 입력해주세요.
+
+# 우선순위 낮음
+typeMismatch=타입 오류 메세지
+```
+
+<br>
+
+### 8. Validator 분리1
+
+Spring 에서 제공하는 Validator 를 구현하면 검증 객체로 분리할 수 있다.
+
+```java
+@Component
+public class ItemValidator implements Validator {
+	@Override
+	public boolean supports(Class<?> clazz) {
+		// 검증을 지원할 것 인지 여부, 해당 검증기는 Item 객체만 통과하도록 설정
+		return Item.class.isAssignableFrom(clazz);
+	}
+
+	@Override
+	public void validate(Object target, Errors errors) {
+                // target은 검증을 할 객체
+                // BindingResult 는 Errors 를 상속받는다.
+		Item item = (Item)target;
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "itemName", "required");
+		if (item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() > 1000000) {
+			errors.rejectValue("price", "range", new Object[] {1000, 1000000}, null);
+		}
+		if (item.getQuantity() == null || item.getQuantity() > 10000) {
+			errors.rejectValue("quantity", "max", new Object[] {9999}, null);
+		}
+
+		//특정 필드 예외가 아닌 전체 예외
+		if (item.getPrice() != null && item.getQuantity() != null) {
+			int resultPrice = item.getPrice() * item.getQuantity();
+			if (resultPrice < 10000) {
+				errors.reject("totalPriceMin", new Object[] {10000, resultPrice},
+					null);
+			}
+		}
+	}
+}
+
+```
+
+사용 예시
+```java
+
+private final ItemValidator itemValidator;
+
+@PostMapping("/add")
+public String addItemV5(@ModelAttribute Item item, BindingResult bindingResult,RedirectAttributes redirectAttributes) {
+    
+    itemValidator.validate(item, bindingResult);
+
+    if (bindingResult.hasErrors()) {
+        log.info("errors={}", bindingResult);
+        return "validation/v2/addForm";
+     }
+        .... 생략
+```
+
+<br>
+
+### 9. Validator 분리2 - WebDataBinder 사용
+
+```java
+@InitBinder
+public void init(WebDataBinder dataBinder) {
+    log.info("init binder {}", dataBinder);
+    dataBinder.addValidators(itemValidator);
+}
+```
+- @InitBinder 해당 컨트롤러에만 적용
+- WebDataBinder 에 검증기를 추가하면 해당 컨트롤러에서는 검증기를 자동으로 적용 가능
+
+```java
+public String addItemV6(@Validated @ModelAttribute Item item, BindingResult
+bindingResult, RedirectAttributes redirectAttributes) 
+```
+
+- @Validated 를 사용하면 이제 검증기가 작동한다.
+
+[작동순서] <br>
+1. @Validated 
+2. WebDataBinder 에 등록한 검증기를 찾아서 실행
+3. 검증기가 여러개이니 supports() 를 통해 true가 나온 것을 적용시킨다.
