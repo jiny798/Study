@@ -81,4 +81,7 @@ response.sendError(500) 를 호출하면 errorPage500을 호출하게 되는 것
 
    WAS(`/error-page/500` 다시 요청) -> 필터 -> 서블릿 -> 인터셉터 -> 컨트롤러(/error-page/500)
    -> View
+- 그리고 부트는 BasicErrorController 컨트롤러를 미리 등록하는데, ErrorPage 에서 등록한 /error 를 매핑해서 처리하는 컨트롤러다.
+    즉 `/error-page/500` 를 처리하는 로직이 미리 만들어진다.
+
 
