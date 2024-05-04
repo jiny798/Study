@@ -11,5 +11,7 @@
 
 ### [Bean Validation](https://github.com/jiny798/spring-god/tree/main/itemservice/src/main/java/hello/itemservice/domain/validation)
 
+### [Exception 처리](https://github.com/jiny798/spring-god/tree/main/itemservice/src/main/java/hello/itemservice/domain/exception)
+
 ### JDBC
 
