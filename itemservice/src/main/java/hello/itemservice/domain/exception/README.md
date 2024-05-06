@@ -227,6 +227,30 @@ if (ex instanceof UserException) {
 3. DefaultHandlerExceptionResolver
 
 ### 7-1. ExceptionHandlerExceptionResolver
+내부 예외의 코드,메시지를 변경하는 것은 response 에 직접 데이터를 설정해야 해서 매우 불편하다.
+또 ExceptionHandler 를 직접 구현하여 ModelAndView 를 반환해야 것도 API에는 맞지 않는다. API 는 ModelAndView 가 필요없다.
+
+이 문제는 @ExceptionHandler 를 사용하여 해결한다.
+
+[사용 예시]
+```java
+@ExceptionHandler(IllegalArgumentException.class)
+public ErrorResult illegalExHandle(IllegalArgumentException e) {
+    log.error("[exceptionHandle] ex", e);
+    return new ErrorResult("BAD", e.getMessage());
+}
+```
+- @ExceptionHandler 애노테이션을 선언하고, 해당 컨트롤러에서 처리하고 싶은 예외를 지정한다
+- 해당 예시는 IllegalArgumentException 또는 그 하위 자식 클래스를 모두 처리
+- @ExceptionHandler({AException.class, BException.class}) 복수 예외 처리 가능
+
+```java
+@ExceptionHandler
+public ResponseEntity<ErrorResult> userExHandle(UserException e) {} 
+```
+- @ExceptionHandler 에 예외를 생략할 수 있다. 생략하면 메서드 파라미터의 예외가 지정된다.
+- https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-exceptionhandler.html#mvc-ann-exceptionhandler-args
+- 
 
 ### 7-2. ResponseStatusExceptionResolver
 - ResponseStatusExceptionResolver 는 예외에 따라서 HTTP 상태 코드를 지정해주는 역할
@@ -252,3 +276,29 @@ throw new ResponseStatusException(HttpStatus.NOT_FOUND, "error.bad", new Illegal
 ```
 
 ### 7-3. DefaultHandlerExceptionResolver
+- DefaultHandlerExceptionResolver 는 스프링 내부에서 발생하는 스프링 예외를 담당한다.
+- 대표적으로 컨트롤러 인자에 타입 에러가 발생할 때 나오는 TypeMismatchException 이 있다.
+- 파라미터 바인딩 에러는 컨트롤러에서 서블릿 컨테이너까지 오류가 올라가고, 500에러로 처리되는데,
+  DefaultHandlerExceptionResolver 는 이것을 500 오류가 아니라 400 오류로 변경해준다. (클라이언트에서 잘못 보냈기 때문)
+
+```java
+@GetMapping("/api/default-handler-ex")
+public String defaultException(@RequestParam Integer data) {
+    return "ok";
+}
+```
+
+- int 타입에 문자가 입력되면 아래 응답으로 처리된다.
+```json
+{
+ "status": 400,
+ "error": "Bad Request",
+ "exception":
+"org.springframework.web.method.annotation.MethodArgumentTypeMismatchException",
+ "message": "Failed to convert value of type 'java.lang.String' to required
+type 'java.lang.Integer'; nested exception is java.lang.NumberFormatException:
+For input string: \"hello\"",
+ "path": "/api/default-handler-ex"
+}
+```
+
