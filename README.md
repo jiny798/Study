@@ -1,4 +1,4 @@
-## Study
+## Spring Study
 
 
 #### [MVC 프레임워크 만들기](https://github.com/jiny798/spring-god/tree/main/mvc-first)
@@ -9,3 +9,8 @@
 #### [Exception 처리](https://github.com/jiny798/spring-god/tree/main/itemservice/src/main/java/hello/itemservice/domain/exception)
 #### JDBC
 
+<br>
+
+## JPA Study
+
+## Vue Study
