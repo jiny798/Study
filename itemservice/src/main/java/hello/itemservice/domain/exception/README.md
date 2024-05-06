@@ -228,4 +228,27 @@ if (ex instanceof UserException) {
 
 ### 7-1. ExceptionHandlerExceptionResolver
 
-### 7-1. ResponseStatusExceptionResolver
+### 7-2. ResponseStatusExceptionResolver
+- ResponseStatusExceptionResolver 는 예외에 따라서 HTTP 상태 코드를 지정해주는 역할
+- @ResponseStatus 가 달려있는 예외, ResponseStatusException 예외를 처리한다.
+
+[사용 예시]
+```java
+@ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "잘못된 요청 오류")
+public class BadRequestException extends RuntimeException { ... }
+```
+- 해당 예외가 발생하면 ResponseStatusExceptionResolver 가 ResponseStatus 내용을 참고하여 응답에 적용한다.
+- ResponseStatusExceptionResolver 내부적으로 response.sendError(statusCode, resolvedReason) 를 호출하여 다시 컨트롤러로 요청하는 것이다.
+- reason 은 messages.properties 메시지 코드를 사용할 수 있다.
+
+<br>
+
+[참고]
+
+@ResponseStatus 는 내가 만든 예외에만 적용할 수있고, 라이브러리의 예외에는 적용할 수가 없는 단점이 있는데,
+ResponseStatusException 를 사용하여 해결하면 된다.
+```java
+throw new ResponseStatusException(HttpStatus.NOT_FOUND, "error.bad", new IllegalArgumentException());
+```
+
+### 7-3. DefaultHandlerExceptionResolver
