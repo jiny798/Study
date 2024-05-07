@@ -1,4 +1,4 @@
-package hello.itemservice.domain.exception;
+package hello.itemservice.domain.exception.resolver;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -9,6 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import hello.itemservice.domain.exception.UserException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;

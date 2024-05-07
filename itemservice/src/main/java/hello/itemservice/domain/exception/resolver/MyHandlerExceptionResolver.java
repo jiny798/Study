@@ -1,4 +1,4 @@
-package hello.itemservice.domain.exception;
+package hello.itemservice.domain.exception.resolver;
 
 import java.io.IOException;
 

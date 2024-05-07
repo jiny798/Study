@@ -286,6 +286,31 @@ public ModelAndView ex(ViewException e) {
 }
 ```
 
+### ControllerAdvice
+
+```java
+@RestControllerAdvice
+public class ExControllerAdvice {
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ErrorResult illegalExHandle(IllegalArgumentException e) {
+		log.error("[exceptionHandle] ex", e);
+		return new ErrorResult("BAD", e.getMessage());
+	}
+
+	@ExceptionHandler
+	public ResponseEntity<ErrorResult> userExHandle(UserException e) {
+		log.error("[exceptionHandle] ex", e);
+		ErrorResult errorResult = new ErrorResult("USER-EX", e.getMessage());
+		return new ResponseEntity<>(errorResult, HttpStatus.BAD_REQUEST);
+	}
+}
+```
+- @ControllerAdvice 는 대상으로 지정한 여러 컨트롤러에 @ExceptionHandler 와 검증에 사용되는 WebDataBinder를 초기화하는 @InitBinder를 적용시킬 수 있다.
+- 대상을 지정하지 않으면 모든 컨트롤러에 적용시킬 수 있다.
+- @RestControllerAdvice 는 @ControllerAdvice + @ResponseBody 를 나타낸다.
+
+
 ### 7-2. ResponseStatusExceptionResolver
 - ResponseStatusExceptionResolver 는 예외에 따라서 HTTP 상태 코드를 지정해주는 역할
 - @ResponseStatus 가 달려있는 예외, ResponseStatusException 예외를 처리한다.

@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import hello.itemservice.domain.exception.MyHandlerExceptionResolver;
+import hello.itemservice.domain.exception.resolver.MyHandlerExceptionResolver;
 
 @Configuration
 public class WebMvcConfiguration implements WebMvcConfigurer {
