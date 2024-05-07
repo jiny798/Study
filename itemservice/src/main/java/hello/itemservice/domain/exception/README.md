@@ -250,7 +250,41 @@ public ResponseEntity<ErrorResult> userExHandle(UserException e) {}
 ```
 - @ExceptionHandler 에 예외를 생략할 수 있다. 생략하면 메서드 파라미터의 예외가 지정된다.
 - https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-exceptionhandler.html#mvc-ann-exceptionhandler-args
-- 
+
+[실행 흐름]
+```java
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+@ExceptionHandler(IllegalArgumentException.class)
+public ErrorResult illegalExHandle(IllegalArgumentException e) {
+    log.error("[exceptionHandle] ex", e);
+    return new ErrorResult("BAD", e.getMessage());
+}
+```
+
+1. 컨트롤러에서 IllegalArgumentException 예외가 발생한다.
+2. 예외가 발생하여, ExceptionResolver 가 순서대로 작동한다.
+3. 먼저 우선순위 상 ExceptionHandlerExceptionResolver 를 먼저 실행한다.
+4. ExceptionHandlerExceptionResolver 는 IllegalArgumentException 를 처리할 수 있는 @ExceptionHandler가 있는 메서드를 찾는다.
+5. 해당 메서드를 찾으면 그 메서드를 실행시킨다. (해당 예제는 illegalExHandle())
+6. illegalExHandle() 는  @RestController 안에 있으면 @ResponseBody 가 적용되어 Json 으로 응답이 가능하다.
+7. @ResponseStatus(HttpStatus.BAD_REQUEST) 또한 적용이 되어 HTTP 상태 코드 400으로 응답한다.
+
+```json
+// 결과
+{
+ "code": "BAD",
+ "message": "잘못된 입력 값"
+}
+```
+
+물론 다음과 같이 ModelAndView를 반환하여 HTML 형식의 오류화면으로 보낼 수 있다.
+```java
+@ExceptionHandler(ViewException.class)
+public ModelAndView ex(ViewException e) {
+    log.info("exception e", e);
+    return new ModelAndView("error");
+}
+```
 
 ### 7-2. ResponseStatusExceptionResolver
 - ResponseStatusExceptionResolver 는 예외에 따라서 HTTP 상태 코드를 지정해주는 역할
