@@ -1,4 +1,4 @@
-### 1. Exception 
+## 1. Exception 
 
 개발자가 만든 로직에서 예외가 발생 시, 흐름 과정
 
@@ -22,7 +22,7 @@ HTTP Status 500 – Internal Server Error 화면이 보인다.
 
 <br>
 
-### 2. response.sendError(HTTP 상태 코드, 오류 메시지)
+## 2. response.sendError(HTTP 상태 코드, 오류 메시지)
 
 sendError 를 사용하면 상태 코드와 메시지를 전달할 수 있다.
 
@@ -40,7 +40,7 @@ WAS(sendError 기록 확인) << 필터 << 서블릿 << 인터셉터 << 컨트롤
 - sendError 기록이 있으면, 오류 코드와 메시지를 고객에게 보여준다.
 
 
-### 3. 오류 화면 제어
+## 3. 오류 화면 제어
 과거에는 web.xml 을 통해 설정했지만, 현재는 부트에서 제공하는 방식으로 사용된다
 
 ```java
@@ -86,7 +86,7 @@ response.sendError(500) 를 호출하면 errorPage500을 호출하게 되는 것
 
 <br>
 
-### 4. API 예외 
+## 4. API 예외 
 Json 방식으로 요청하여 예외가 발생한 경우, 응답에 사용할 예외 응답을 추가하면 된다.
 
 ```java
@@ -115,7 +115,7 @@ public ResponseEntity<Map<String, Object>> errorPage500Api(HttpServletRequest re
 
 <br>
 
-### 5. API 예외처리 - 스프링 부트 기본 오류 처리 
+## 5. API 예외처리 - 스프링 부트 기본 오류 처리 
 
 ```java
 // 스프링 부트에 포함된 BasicErrorController
@@ -157,7 +157,7 @@ java:19...,
 <br>
 <br>
 
-### 6. API 예외 처리 - HandlerExceptionResolver 
+## 6. API 예외 처리 - HandlerExceptionResolver 
 
 스프링부트는 기본적으로 RuntimeException, IllegalArgumentException 예외가 발생하면 모두 500으로 처리한다.
 IllegalArgumentException 을 400으로 처리하기 위해서는 별도로 설정이 필요하다.
@@ -218,7 +218,7 @@ if (ex instanceof UserException) {
 
 <br>
 
-### 7. API 예외 처리 - 스프링이 제공하는 ExceptionResolver1
+## 7. API 예외 처리 - 스프링이 제공하는 ExceptionResolver1
 
 스프링부트는 HandlerExceptionResolverComposite 를 통해 Resolver를 관리하는데, 다음 순서로 등록한다.
 
@@ -226,7 +226,7 @@ if (ex instanceof UserException) {
 2. ResponseStatusExceptionResolver
 3. DefaultHandlerExceptionResolver
 
-### 7-1. ExceptionHandlerExceptionResolver
+## 7-1. ExceptionHandlerExceptionResolver
 내부 예외의 코드,메시지를 변경하는 것은 response 에 직접 데이터를 설정해야 해서 매우 불편하다.
 또 ExceptionHandler 를 직접 구현하여 ModelAndView 를 반환해야 것도 API에는 맞지 않는다. API 는 ModelAndView 가 필요없다.
 
@@ -311,7 +311,7 @@ public class ExControllerAdvice {
 - @RestControllerAdvice 는 @ControllerAdvice + @ResponseBody 를 나타낸다.
 
 
-### 7-2. ResponseStatusExceptionResolver
+## 7-2. ResponseStatusExceptionResolver
 - ResponseStatusExceptionResolver 는 예외에 따라서 HTTP 상태 코드를 지정해주는 역할
 - @ResponseStatus 가 달려있는 예외, ResponseStatusException 예외를 처리한다.
 
@@ -334,7 +334,7 @@ ResponseStatusException 를 사용하여 해결하면 된다.
 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "error.bad", new IllegalArgumentException());
 ```
 
-### 7-3. DefaultHandlerExceptionResolver
+## 7-3. DefaultHandlerExceptionResolver
 - DefaultHandlerExceptionResolver 는 스프링 내부에서 발생하는 스프링 예외를 담당한다.
 - 대표적으로 컨트롤러 인자에 타입 에러가 발생할 때 나오는 TypeMismatchException 이 있다.
 - 파라미터 바인딩 에러는 컨트롤러에서 서블릿 컨테이너까지 오류가 올라가고, 500에러로 처리되는데,
