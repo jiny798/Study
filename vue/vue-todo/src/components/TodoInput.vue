@@ -41,6 +41,7 @@ input:focus {
 }
 
 .inputBox input {
+  width: inherit;
   border-style: none;
   font-size: 0.9rem;
 }
