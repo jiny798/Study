@@ -5,27 +5,46 @@
     <span class="addContainer" v-on:click="addTodo">
       <i class="">+</i>
     </span>
+
+    <ModalView v-if="showModal" @close="showModal = false">
+        <h3 slot="header">경고</h3>
+        <div slot="body">아무값도 입력하지 않았습니다. 
+          <div><i @click="showModal = false"> 확인 </i></div>
+          
+          
+        </div>
+
+    </ModalView>
   </div>
 </template>
 
 <script>
+import ModalView from './common/ModalView.vue';
+
 export default {
   data: function(){
     return{
-      newTodoItem: ""
+      newTodoItem: "",
+      showModal: false,
     }
   },
   methods:{
+    // https://v2.vuejs.org/v2/examples/modal.html 모달 사이트 
     addTodo:function(){
       if(this.newTodoItem !== ''){
         // this.$emit('이벤트 이름', 인자1,인자2);
         this.$emit('addTodoItem',this.newTodoItem );
         this.clearInput();
-      }     
+      }else{
+        this.showModal = !this.showModal;
+      }
     },
     clearInput: function(){
       this.newTodoItem = '';
     }
+  },
+  components:{
+    ModalView : ModalView,
   }
 }
 </script>

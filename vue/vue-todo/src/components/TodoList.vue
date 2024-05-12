@@ -1,5 +1,17 @@
 <template>
-  <div>
+<section>
+    <transition-group name="list" tag="ul">
+      <li v-for="(todoItem, index) in propsdata" class="shadow" v-bind:key="todoItem.item">
+        <font-awesome-icon  :icon="['fas','check']" v-on:click="toggleComplete(todoItem, index)"  class="checkBtn" 
+          v-bind:class="{checkBtnCompleted: todoItem.completed}"/>
+        <span v-bind:class="{textCompleted: todoItem.completed}">{{ todoItem.item }}</span>
+        <span class="removeBtn" v-on:click="removeTodo(todoItem, index)">
+          <i>X</i>
+        </span>
+      </li>
+    </transition-group>
+  </section>
+  <!-- <div>
     <ul>
       <li v-for="(todoItem, index) in propsdata" v-bind:key="todoItem.item" class="shadow">
         <font-awesome-icon  :icon="['fas','check']" v-on:click="toggleComplete(todoItem, index)"  class="checkBtn" 
@@ -9,10 +21,9 @@
         <span class="removeBtn" v-on:click="removeTodo(todoItem, index)">
           <i>X</i>
         </span>
-      </li>
-      
+      </li>      
     </ul>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -65,5 +76,14 @@ li {
 .removeBtn {
   margin-left: auto;
   color: #de4343;
+}
+
+/* transition css */
+.list-enter-active, .list-leave-active {
+  transition: all 1s;
+}
+.list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */ {
+  opacity: 0;
+  transform: translateY(30px);
 }
 </style>
