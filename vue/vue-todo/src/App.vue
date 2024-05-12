@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <TodoHeader></TodoHeader>
-    <TodoInput></TodoInput>
-    <todo-list></todo-list>
+    <TodoInput v-on:addTodoItem="addOneItem"></TodoInput>
+    <todo-list v-bind:propsdata = "todoItems"></todo-list>
     <todo-footer></todo-footer>
   </div>
 </template>
@@ -14,6 +14,27 @@ import TodoList from './components/TodoList.vue'
 import TodoFooter from './components/TodoFooter.vue'
 
 export default {
+  data:function(){
+    return{
+      todoItems: []
+    }
+  },
+  methods:{
+    addOneItem: function(todoItem){
+      var obj = {
+          completed: false, item: todoItem
+        };
+        localStorage.setItem(this.newTodoItem, JSON.stringify(obj));
+    }
+  }
+  ,
+  created:function () {
+    if(localStorage.length > 0){
+      for(var i = 0 ; i < localStorage.length ; i++){
+        this.todoItems.push(JSON.parse(localStorage.getItem(localStorage.key(i))));
+      }
+    }
+  },
   components:{
     'TodoHeader' : TodoHeader,
     'TodoInput' : TodoInput,
