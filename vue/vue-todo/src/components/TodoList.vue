@@ -21,14 +21,10 @@ props: ['propsdata'],
 
 methods:{
   removeTodo: function(todoItem, index){    
-    localStorage.removeItem(todoItem);
-    this.todoItems.splice(index,1);
+    this.$emit('removeItem', todoItem, index);
   },
   toggleComplete: function(todoItem, index){
-    todoItem.completed = !todoItem.completed;
-    console.log(index);
-    localStorage.removeItem(todoItem.item);
-    localStorage.setItem(todoItem.item, JSON.stringify(todoItem));
+     this.$emit('toggleItem', todoItem, index);
   }
 }
 

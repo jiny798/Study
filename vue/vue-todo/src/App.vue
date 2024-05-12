@@ -2,8 +2,10 @@
   <div id="app">
     <TodoHeader></TodoHeader>
     <TodoInput v-on:addTodoItem="addOneItem"></TodoInput>
-    <todo-list v-bind:propsdata = "todoItems"></todo-list>
-    <todo-footer></todo-footer>
+    <todo-list v-bind:propsdata = "todoItems" 
+    v-on:removeItem="removeOneItem" 
+    v-on:toggleItem="toggleOneItem"></todo-list>
+    <todo-footer v-on:clearAll="clearAllItems"></todo-footer>
   </div>
 </template>
 
@@ -21,10 +23,25 @@ export default {
   },
   methods:{
     addOneItem: function(todoItem){
-      var obj = {
-          completed: false, item: todoItem
-        };
-        localStorage.setItem(this.newTodoItem, JSON.stringify(obj));
+      var obj = { completed: false, item: todoItem};
+      localStorage.setItem(todoItem, JSON.stringify(obj));
+      this.todoItems.push(obj);
+    },
+    removeOneItem: function(todoItem, index){
+      localStorage.removeItem(todoItem.item);
+      this.todoItems.splice(index,1);
+    },
+    toggleOneItem: function(todoItem, index){
+      // todoItem.completed = !todoItem.completed;
+      // todoItem을 받아서 바꾸는 것보다, index만 받아서 직접 todoItems 변경 
+      this.todoItems[index].completed = !this.todoItems[index].completed; 
+      localStorage.removeItem(todoItem.item);
+      localStorage.setItem(todoItem.item, JSON.stringify(todoItem));
+    },
+    clearAllItems: function(){
+      console.log('clearAllItems');
+      localStorage.clear();
+      this.todoItems = [];
     }
   }
   ,
