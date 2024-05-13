@@ -14,3 +14,5 @@
 ## JPA Study
 
 ## Vue Study
+
+#### [todo-app (vue2)](https://github.com/jiny798/spring-god/tree/main/vue/vue-todo) 
