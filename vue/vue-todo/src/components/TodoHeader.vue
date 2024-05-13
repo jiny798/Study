@@ -1,14 +1,17 @@
 <template>
   <div>
     <header>
-      <h1>TODO it!</h1>
+      <h1>{{ this.$store.state.headerText}}</h1>
     </header>
   </div>
 </template>
 
 <script>
 export default {
-
+  created(){
+  //  console.log(this.$store.state.headerText);
+  //  this.$store.state.headerText = 'aaa';
+  }
 }
 </script>
 
