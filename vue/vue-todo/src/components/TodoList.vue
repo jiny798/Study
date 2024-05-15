@@ -11,19 +11,7 @@
       </li>
     </transition-group>
   </section>
-  <!-- <div>
-    <ul>
-      <li v-for="(todoItem, index) in propsdata" v-bind:key="todoItem.item" class="shadow">
-        <font-awesome-icon  :icon="['fas','check']" v-on:click="toggleComplete(todoItem, index)"  class="checkBtn" 
-          v-bind:class="{checkBtnCompleted: todoItem.completed}"/>
-        
-        <span v-bind:class="{textCompleted: todoItem.completed}">{{ todoItem.item }}</span>
-        <span class="removeBtn" v-on:click="removeTodo(todoItem, index)">
-          <i>X</i>
-        </span>
-      </li>      
-    </ul>
-  </div> -->
+
 </template>
 
 <script>
@@ -31,10 +19,15 @@ export default {
 
 methods:{
   removeTodo(todoItem, index){    
-    this.$emit('removeItem', todoItem, index);
+    // const obj = {
+    //   todoItem,
+    //   index
+    // }
+    this.$store.commit('removeOneItem', {todoItem, index}); // 바로 객체 보내기 
   },
   toggleComplete(todoItem, index){
-     this.$emit('toggleItem', todoItem, index);
+    //  this.$emit('toggleItem', todoItem, index);
+    this.$store.commit('toggleOneItem', {todoItem, index}); // 바로 객체 보내기 
   }
 }
 
