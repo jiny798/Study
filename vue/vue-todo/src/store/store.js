@@ -1,13 +1,13 @@
-import Vue from 'vue'
+import Vue from 'vue';
 import Vuex from 'vuex';
 // import * as getters from './getters';
 // import * as mutations from './mutations';
-import todoApp from './modules/todoApp'
+import todoApp from './modules/todoApp';
 
-Vue.use(Vuex); // Vuex 라이브러리 초기화 
+Vue.use(Vuex); // Vuex 라이브러리 초기화
 
 // const storage = {
-//     fetch() {     
+//     fetch() {
 //         const arr = [];
 //         if(localStorage.length > 0){
 //             for(let i = 0 ; i < localStorage.length ; i++){
@@ -20,6 +20,6 @@ Vue.use(Vuex); // Vuex 라이브러리 초기화
 
 export const store = new Vuex.Store({
     modules: {
-        todoApp
-    }
-})
+        todoApp,
+    },
+});
