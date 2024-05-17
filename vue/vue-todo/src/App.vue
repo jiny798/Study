@@ -1,5 +1,8 @@
 <template>
     <div id="app">
+        <tool-bar></tool-bar>
+        <router-view></router-view>
+
         <TodoHeader></TodoHeader>
         <TodoInput></TodoInput>
         <TodoList></TodoList>
@@ -12,6 +15,7 @@ import TodoHeader from './components/TodoHeader.vue';
 import TodoInput from './components/TodoInput.vue';
 import TodoList from './components/TodoList.vue';
 import TodoFooter from './components/TodoFooter.vue';
+import ToolBar from './components/ToolBar.vue';
 
 export default {
     data() {
@@ -26,12 +30,15 @@ export default {
         TodoInput,
         TodoList,
         TodoFooter,
+        ToolBar,
     },
 };
 </script>
 
 <style>
 body {
+    padding: 0;
+    margin: 0;
     text-align: center;
     background-color: #f6f6f6;
 }
