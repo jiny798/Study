@@ -23,7 +23,7 @@ import { mapGetters, mapMutations } from 'vuex';
 export default {
     methods: {
         ...mapMutations({
-            removeTodo: 'removeOneItem', // 현재 컴포넌트의 메서드 : 호출할 mutation
+            removeTodo: 'removeOneItem', // 현재 컴포넌트의 메서드 : 가져올 mutation
             toggleComplete: 'toggleOneItem',
         }),
     },

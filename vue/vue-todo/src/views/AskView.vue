@@ -1,27 +1,26 @@
 <template>
     <div>
-        <div v-for="item in ask">{{ item.title }}</div>
+        <div v-for="item in fetchedAsk">{{ item.title }}</div>
     </div>
 </template>
 
 <script>
-import { fetchAskList } from '../api/index.js';
+import { mapState, mapGetters } from 'vuex';
 export default {
-    data() {
-        return {
-            ask: [],
-        };
+    computed: {
+        // ...mapGetters(['fetchedAsk']),
+        // ...mapGetters({
+        //     fetchedAsk: 'fetchedAsk',
+        // }),
+        ...mapState({
+            fetchedAsk: (state) => state.ask,
+        }),
+        // ask() {
+        //     return this.$store.state.ask;
+        // },
     },
     created() {
-        // 컴포넌트가 생성되자마자 실행되는 라이프 사이클 훅
-        var vm = this;
-        fetchAskList()
-            .then(function (response) {
-                vm.ask = response.data;
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+        this.$store.dispatch('FETCH_ASK');
     },
     beforeMount() {},
     mounted() {},

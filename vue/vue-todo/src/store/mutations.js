@@ -1,24 +1,14 @@
-const addOneItem = (state, todoItem) => {
-    const obj = { completed: false, item: todoItem };
-    localStorage.setItem(todoItem, JSON.stringify(obj));
-    // this.todoItems.push(obj);
-    state.todoItems.push(obj);
+export default {
+    SET_NEWS(state, news) {
+        // mutations 는 state와 data를 받을 수 있음
+        state.news = news;
+    },
+    SET_JOBS(state, jobs) {
+        // mutations 는 state와 data를 받을 수 있음
+        state.jobs = jobs;
+    },
+    SET_ASK(state, ask) {
+        // mutations 는 state와 data를 받을 수 있음
+        state.ask = ask;
+    },
 };
-const removeOneItem = (state, payload) => {
-    console.log(state);
-    localStorage.removeItem(payload.todoItem.item);
-    // this.todoItems.splice(index,1);
-    state.todoItems.splice(payload.index, 1);
-};
-const toggleOneItem = (state, payload) => {
-    console.log(payload.index);
-    state.todoItems[payload.index].completed = !state.todoItems[payload.index].completed;
-    localStorage.removeItem(payload.todoItem.item);
-    localStorage.setItem(payload.todoItem.item, JSON.stringify(payload.todoItem));
-};
-const clearAllItems = (state) => {
-    localStorage.clear();
-    state.todoItems = [];
-};
-
-export { addOneItem, removeOneItem, toggleOneItem, clearAllItems };
