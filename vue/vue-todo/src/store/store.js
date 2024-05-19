@@ -20,6 +20,9 @@ export const store = new Vuex.Store({
         fetchedAsk(state) {
             return state.ask;
         },
+        fetchedItem(state) {
+            return state.item;
+        },
     },
     mutations: mutations,
     actions,

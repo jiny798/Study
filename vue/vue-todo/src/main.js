@@ -2,12 +2,15 @@ import Vue from 'vue';
 import App from './App.vue';
 import { router } from './routes/index.js';
 
+// font awesome
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faUser } from '@fortawesome/free-solid-svg-icons';
+
 import { store } from './store/store';
 
 library.add(faCheck);
+library.add(faUser);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.config.productionTip = false;
 
