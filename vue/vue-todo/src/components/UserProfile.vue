@@ -4,12 +4,12 @@
             <font-awesome-icon class="fa-user" :icon="['fas', 'user']" />
         </div>
         <div class="user-description">
-            <div>{{ userInfo.id }}</div>
+            <div>{{ info.id }}</div>
             <!-- <router-link :to="`/user/${userInfo.user}`">
                 {{ userInfo.id }}
             </router-link> -->
             <div class="time">
-                {{ userInfo.created }}
+                {{ info.created }}
             </div>
         </div>
     </div>
@@ -17,11 +17,14 @@
 
 <script>
 export default {
-    computed: {
-        userInfo() {
-            return this.$store.state.user;
-        },
+    props: {
+        info: Object,
     },
+    // computed: {
+    //     userInfo() {
+    //         return this.$store.state.user;
+    //     },
+    // },
 };
 </script>
 
