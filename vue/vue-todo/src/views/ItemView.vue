@@ -44,19 +44,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.user-container {
-    display: flex; /*내부 div 가로로*/
-    align-items: center; /* 요소 하나씩 수직 중앙 정렬 */
-    padding: 0.5rem;
-}
-.fa-user {
-    font-size: 2.5rem;
-}
-.user-description {
-    padding-left: 8px;
-}
-.time {
-    font-size: 0.7rem;
-}
-</style>
+<style scoped></style>
