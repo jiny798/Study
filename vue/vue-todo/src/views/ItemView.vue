@@ -1,26 +1,18 @@
 <template>
     <div>
         <section>
-            <!--질문 정보-->
-            <div class="user-container">
-                <div>
-                    <font-awesome-icon class="fa-user" :icon="['fas', 'user']" />
-                </div>
-                <div class="user-description">
-                    <router-link :to="`/user/${fetchedItem.user}`">
-                        {{ fetchedItem.user }}
-                    </router-link>
-                    <div class="time">
-                        {{ fetchedItem.time_ago }}
-                    </div>
-                </div>
-            </div>
+            <!--사용자 정보-->
+            <user-profile :info="fetchedItem">
+                <div slot="username">{{ fetchedItem.user }}</div>
+                <template slot="time">{{ fetchedItem.time_ago }}</template>
+            </user-profile>
         </section>
-
+        <section>
+            <h2>{{ fetchedItem.title }}</h2>
+        </section>
         <section>
             <!--댓글-->
             <!-- <div v-html="fetchedItem.content"></div> -->
-            <h2>{{ fetchedItem.title }}</h2>
             <div v-html="fetchedItem.content"></div>
         </section>
         <!-- <p>{{ fetchedItem.title }}</p>
@@ -32,8 +24,12 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import UserProfile from '../components/UserProfile.vue';
 
 export default {
+    components: {
+        UserProfile,
+    },
     computed: {
         ...mapGetters(['fetchedItem']),
     },

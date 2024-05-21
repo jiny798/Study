@@ -4,12 +4,14 @@
             <font-awesome-icon class="fa-user" :icon="['fas', 'user']" />
         </div>
         <div class="user-description">
-            <div>{{ info.id }}</div>
-            <!-- <router-link :to="`/user/${userInfo.user}`">
-                {{ userInfo.id }}
-            </router-link> -->
+            <slot name="username"></slot>
+
             <div class="time">
-                {{ info.created }}
+                <!-- {{ info.created }} -->
+                <slot name="time"></slot>
+            </div>
+            <div>
+                <slot name="karma"></slot>
             </div>
         </div>
     </div>
