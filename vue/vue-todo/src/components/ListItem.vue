@@ -41,13 +41,13 @@ export default {
     created() {
         const name = this.$route.name;
 
-        if (name === 'news') {
-            this.$store.dispatch('FETCH_NEWS'); // action 수행
-        } else if (name === 'ask') {
-            this.$store.dispatch('FETCH_ASK');
-        } else if (name === 'jobs') {
-            this.$store.dispatch('FETCH_JOBS');
-        }
+        // if (name === 'news') {
+        //     this.$store.dispatch('FETCH_NEWS'); // action 수행
+        // } else if (name === 'ask') {
+        //     this.$store.dispatch('FETCH_ASK');
+        // } else if (name === 'jobs') {
+        //     this.$store.dispatch('FETCH_JOBS');
+        // }
     },
     computed: {
         listItems() {

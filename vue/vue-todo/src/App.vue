@@ -4,6 +4,7 @@
         <transition name="fade">
             <router-view></router-view>
         </transition>
+        <spinner :loading="loadingStatus"></spinner>
 
         <div class="todo">
             <TodoHeader></TodoHeader>
@@ -20,21 +21,39 @@ import TodoInput from './components/TodoInput.vue';
 import TodoList from './components/TodoList.vue';
 import TodoFooter from './components/TodoFooter.vue';
 import ToolBar from './components/ToolBar.vue';
+import Spinner from './components/Spinner.vue';
+import bus from './utils/bus.js';
 
 export default {
     data() {
         return {
             todoItems: [],
+            loadingStatus: false,
         };
     },
-    methods: {},
-
     components: {
         TodoHeader,
         TodoInput,
         TodoList,
         TodoFooter,
         ToolBar,
+        Spinner,
+    },
+    methods: {
+        startSpinner() {
+            this.loadingStatus = true;
+        },
+        endSpinner() {
+            this.loadingStatus = false;
+        },
+    },
+    created() {
+        bus.$on('start:spinner', () => this.startSpinner());
+        bus.$on('end:spinner', () => this.endSpinner());
+    },
+    beforeDestroy() {
+        bus.$off('start:spinner', () => this.startSpinner());
+        bus.$off('end:spinner', () => this.endSpinner());
     },
 };
 </script>

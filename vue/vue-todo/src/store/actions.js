@@ -5,8 +5,8 @@ export default {
         // mutations 를 호출하기 위한 context 제공
         fetchNewsList()
             .then((response) => {
-                console.log(response);
                 context.commit('SET_NEWS', response.data);
+                return response;
             })
             .catch((error) => {
                 console.log(error);

@@ -3,8 +3,10 @@
         <section>
             <!--사용자 정보-->
             <user-profile :info="fetchedItem">
-                <div slot="username">{{ fetchedItem.user }}</div>
-                <template slot="time">{{ fetchedItem.time_ago }}</template>
+                <router-link slot="username" :to="`/user/${fetchedItem.user}`">
+                    {{ fetchedItem.user }}
+                </router-link>
+                <template slot="time">{{ 'Posted ' + fetchedItem.time_ago }}</template>
             </user-profile>
         </section>
         <section>
@@ -12,13 +14,8 @@
         </section>
         <section>
             <!--댓글-->
-            <!-- <div v-html="fetchedItem.content"></div> -->
             <div v-html="fetchedItem.content"></div>
         </section>
-        <!-- <p>{{ fetchedItem.title }}</p>
-        <div>
-            {{ fetchedItem.content }}
-        </div> -->
     </div>
 </template>
 
