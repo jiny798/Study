@@ -10,11 +10,12 @@ Vue.use(Vuex); // Vuex 라이브러리 초기화
 
 export const store = new Vuex.Store({
     state: {
-        news: [],
-        jobs: [],
-        ask: [],
+        // news: [],
+        // jobs: [],
+        // ask: [],
         user: {},
         item: {},
+        list: [],
     },
     getters: {
         fetchedAsk(state) {
