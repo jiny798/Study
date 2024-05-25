@@ -3,7 +3,7 @@ import { fetchNewsList, fetchJobsList, fetchAskList, fetchUserInfo, fetchComment
 export default {
     FETCH_NEWS(context) {
         // mutations 를 호출하기 위한 context 제공
-        fetchNewsList()
+        return fetchNewsList()
             .then((response) => {
                 context.commit('SET_NEWS', response.data);
                 return response;
@@ -14,7 +14,7 @@ export default {
     },
     FETCH_JOBS({ commit }) {
         // mutations 를 호출하기 위한 context 제공
-        fetchJobsList()
+        return fetchJobsList()
             .then(({ data }) => {
                 commit('SET_JOBS', data);
             })
@@ -24,7 +24,7 @@ export default {
     },
     FETCH_ASK({ commit }) {
         // mutations 를 호출하기 위한 context 제공
-        fetchAskList()
+        return fetchAskList()
             .then(({ data }) => {
                 commit('SET_ASK', data);
             })
@@ -33,7 +33,7 @@ export default {
             });
     },
     FETCH_USER({ commit }, username) {
-        fetchUserInfo(username)
+        return fetchUserInfo(username)
             .then(({ data }) => {
                 commit('SET_USER', data);
             })
@@ -43,7 +43,7 @@ export default {
     },
 
     FETCH_ITEM({ commit }, id) {
-        fetchCommentItem(id)
+        return fetchCommentItem(id)
             .then(({ data }) => {
                 commit('SET_ITEM', data);
             })
@@ -53,9 +53,10 @@ export default {
     },
 
     FETCH_LIST({ commit }, pageName) {
-        fetchList(pageName)
-            .then(({ data }) => {
-                commit('SET_LIST', data);
+        return fetchList(pageName)
+            .then((response) => {
+                commit('SET_LIST', response.data);
+                return response;
             })
             .catch((error) => {
                 console.log(error);
