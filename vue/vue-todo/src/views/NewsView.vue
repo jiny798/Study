@@ -25,6 +25,9 @@ export default {
         //     });
         // bus.$emit('end:spinner');
     },
+    // mounted() {
+    //     bus.$emit('end:spinner');
+    // },
 };
 </script>
 

@@ -38,7 +38,13 @@
 // import { fetchNewsList } from '../api/index.js';
 
 export default {
+    data() {
+        return {
+            listItems: {},
+        };
+    },
     created() {
+        this.listItems = this.$store.state.list;
         // const name = this.$route.name;
         // if (name === 'news') {
         //     this.$store.dispatch('FETCH_NEWS'); // action 수행
@@ -49,17 +55,17 @@ export default {
         // }
     },
     computed: {
-        listItems() {
-            return this.$store.state.list;
-            // const name = this.$route.name;
-            // if (name === 'news') {
-            //     return this.$store.state.news;
-            // } else if (name === 'ask') {
-            //     return this.$store.state.ask;
-            // } else {
-            //     return this.$store.state.jobs;
-            // }
-        },
+        // listItems() {
+        //     return this.$store.state.list;
+        // const name = this.$route.name;
+        // if (name === 'news') {
+        //     return this.$store.state.news;
+        // } else if (name === 'ask') {
+        //     return this.$store.state.ask;
+        // } else {
+        //     return this.$store.state.jobs;
+        // }
+        // },
     },
 };
 </script>

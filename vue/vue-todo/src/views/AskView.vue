@@ -61,7 +61,9 @@ export default {
         // bus.$emit('end:spinner');
     },
     // beforeMount() {},
-    // mounted() {},
+    // mounted() {
+    //     bus.$emit('end:spinner');
+    // },
 };
 </script>
 
