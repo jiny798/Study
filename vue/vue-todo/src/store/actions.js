@@ -1,17 +1,25 @@
 import { fetchNewsList, fetchJobsList, fetchAskList, fetchUserInfo, fetchCommentItem, fetchList } from '@/api/index.js';
 
 export default {
-    FETCH_NEWS(context) {
-        // mutations 를 호출하기 위한 context 제공
-        return fetchNewsList()
-            .then((response) => {
-                context.commit('SET_NEWS', response.data);
-                return response;
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+    // promise
+    // FETCH_NEWS(context) {
+    // mutations 를 호출하기 위한 context 제공
+    // return fetchNewsList()
+    //     .then((response) => {
+    //         context.commit('SET_NEWS', response.data);
+    //         return response;
+    //     })
+    //     .catch((error) => {
+    //         console.log(error);
+    //     });
+    // },
+    // async
+    async FETCH_NEWS(context) {
+        const response = await fetchNewsList();
+        context.commit('SET_NEWS', response.data);
+        return response; // return 해줘야 promise chaning 가능
     },
+
     FETCH_JOBS({ commit }) {
         // mutations 를 호출하기 위한 context 제공
         return fetchJobsList()
@@ -52,14 +60,18 @@ export default {
             });
     },
 
-    FETCH_LIST({ commit }, pageName) {
-        return fetchList(pageName)
-            .then((response) => {
-                commit('SET_LIST', response.data);
-                return response;
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+    async FETCH_LIST({ commit }, pageName) {
+        const response = await fetchList(pageName);
+        commit('SET_LIST', response.data);
+        return response;
+
+        // return fetchList(pageName)
+        //     .then((response) => {
+        //         commit('SET_LIST', response.data);
+        //         return response;
+        //     })
+        //     .catch((error) => {
+        //         console.log(error);
+        //     });
     },
 };
