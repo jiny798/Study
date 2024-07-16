@@ -1,8 +1,11 @@
-### Security 적용 시
+### Security 기초 이해
 
-SpringBootWebSecurityConfiguration
+스프링 시큐리티를 사용한다면, 기본적인 웹 보안 기능이 자동으로 시스템에 연동되어 작동한다.
 
-- 자동 설정에 의한 기본 보안 설정 클래스를 생성하며, 아래와 같다
+시큐리티 내부에 SpringBootWebSecurityConfiguration 클래스가 "자동 설정에 의한 기본 보안 설정 클래스"를 생성하게 되고,
+해당 설정 클래스 덕분에 우리의 시스템에 기본적인 보안 기능이 연동되는 것이다.
+
+__그럼 어떤 기본 보안 설정 클래스(빈)을 생성하는지 보자__
 
 ```java
 import org.springframework.boot.autoconfigure.security.ConditionalOnDefaultWebSecurity;
@@ -12,16 +15,54 @@ static class SecurityFilterChainConfiguration {
 	@Bean
 	@Order(SecurityProperties.BASIC_AUTH_ORDER)
 	SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-		http.authorizeHttpRequests((requests) -> requests.anyRequest().authenticated());
-		http.formLogin(withDefaults());
-		http.httpBasic(withDefaults());
+		http.authorizeHttpRequests((requests) -> requests.anyRequest().authenticated()); // 어떠한 요청이라도 인증을 받아야 한다
+		http.formLogin(withDefaults()); // form 인증 방식을 제공 
+		http.httpBasic(withDefaults()); // http basic 인증 방식 제공
 		return http.build();
 	}
 }
 
 ```
+- 먼저 HttpSecurity를 주입받아 사용한 뒤, SecurityFilterChain 를 반환하는 것을 볼 수 있다
+- SecurityFilterChain 이 바로 기본 보안 설정 클래스이다.
+- @ConditionalOnDefaultWebSecurity 은 조건이다. 아래를 보자
 
-- HttpSecurity를 통해서 보안 설정 진행
+#### @ConditionalOnDefaultWebSecurity
+```java
+@Target({ ElementType.TYPE, ElementType.METHOD })
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Conditional(DefaultWebSecurityCondition.class)
+public @interface ConditionalOnDefaultWebSecurity {
+
+}
+```
+- DefaultWebSecurityCondition 클래스가 조건으로 걸려있다
+
+#### DefaultWebSecurityCondition
+```java
+class DefaultWebSecurityCondition extends AllNestedConditions {
+
+	DefaultWebSecurityCondition() {
+		super(ConfigurationPhase.REGISTER_BEAN);
+	}
+
+	@ConditionalOnClass({ SecurityFilterChain.class, HttpSecurity.class })
+	static class Classes {
+
+	}
+
+	@ConditionalOnMissingBean({ SecurityFilterChain.class })
+	static class Beans {
+
+	}
+
+}
+```
+- ConditionalOnClass, ConditionalOnMissingBean 이 있는데, 이 2개의 조건이 참이어야 한다
+- ConditionalOnClass 는 설정된 클래스들이 클래스 경로에 존재하면 true (시큐리티 의존성을 추가하면 모두 추가된다)
+- ConditionalOnMissingBean 는 설정된 클래스를 직접 생성하지 않았다면 true 
+- 모두 참이면 위에서 언급한 defaultSecurityFilterChain 메서드를 실행할 수 있다
 
 ### 초기화 작업
 
