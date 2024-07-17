@@ -185,18 +185,18 @@ static class SecurityFilterChainConfiguration {
 <br>
 
 
-
 ## HttpSecurity 
 - 결국 HttpSecurityConfiguration 에서 HttpSecurity(SecurityBuilder) 를 만들어내고
-- SecurityFilterChainConfiguration 에서 해당 HttpSecurity 를 사용해서, SecurityFilterChain 빈을 생성
-- SecurityFilterChain 를 만드는 것이 최종 목표 
+- SecurityFilterChainConfiguration 에서 해당 HttpSecurity의 build() 를 사용해서, SecurityFilterChain 빈을 생성하는 것이 최종 목표
+- HttpSecurity 는 SecurityFilterChain 를 만든다.
 
-또한 Configurer 내부에서 init, configure 메서드를 통해 초기화 작업을 진행하면
+> Configurer 내부에서 init, configure 메서드를 통해 초기화 작업을 진행하면
 각종 필터들이 만들어지게 되는데, 필터들은 SecurityFilterChain 빈안의 리스트에 저장된다.
 SecurityFilterChain 는 인증/인가에 필요한 필터들을 가지고 있는 필터 체인이다.
 
 
 ## SecurityFilterChain 
+- 여러 필터들을 가지고 관리하는 클래스 
 - boolean matches(request), List<Filter> getFilter() 메서드를 가지고 있다
 - mathes() 는 현재 요청이 현재 SecurityFilterChain 을 사용해서 처리해야 하는지 판단하는 메서드
 - getFilter() 는 어떤 필터들이 현재 필터체인에 포함되어 있는지 알 수 있다
@@ -205,18 +205,29 @@ SecurityFilterChain 는 인증/인가에 필요한 필터들을 가지고 있는
 - Matcher를 통해 적절한 SecurityFilterChain 을 찾고, 필터를 적용한다
 
 ## WebSecurity [WebSecurity > HttpSecurity]
-- 다시 정리하면, HttpSecurity 를 통해 SecurityFilterChain 을 만들었으며
-- WebSecurity는 SecurityFilterChain 빈을 SecurityBuilder 에 다시 저장하고,
-  WebSecurity가 build()를 호출하면 SecurityFilterChain 을 꺼내서 FilterChainProxy 생성자에 전달하는 역할을 수행 
+- WebSecurityConfiguration 에서 WebSecurity 를 생성하고 초기화를 진행한다
+- WebSecurity는 HttpSecurity가 만든 SecurityFilterChain 빈을 SecurityBuilder 에 다시 저장하고,
+- WebSecurity가 build()를 호출하면 SecurityFilterChain 을 꺼내서 FilterChainProxy 생성자에 전달하는 역할을 수행 
+- WebSecurity는 FilterChainProxy 를 만든다 
 
-#### * WebSecurity는 여러개의 HttpSecurity 가 만든 여러 SecurityFilterChain 을 가질 수 있다. (다중 보안 설정)
+> 결국 FilterChainProxy 가 필터체인을 들고 있으니, 필터들을 실행시키는 첫 단추라고 볼 수 있다 
+
+> WebSecurity는 여러개의 HttpSecurity 가 만든 여러 SecurityFilterChain 을 가질 수 있다. (다중 보안 설정)
+
 
 ### 돌아와서 SecurityFilterChain , FilterChainProxy
 - 요청이 오면 SecurityFilterChain 에 있는 필터들이 실행되는데, 사실 SecurityFilterChain 이 직접 수행하지 않고, 다른 클래스에게 위임한다
 - 바로 FilterChainProxy 가 필터들을 처리하는 것
 - 초기화 과정은 FilterChainProxy 생성하는 것이 최종 목표이고 FilterChainProxy 이 모든 필터를 가지고 있다
 
+-----------------------------------------------------------------------------
 
+<br>
+HttpScurity -> SecurityFilterChain
+
+WebSecurity -> FilterChainProxy
+
+-----------------------------------------------------------------------------
 
 <br>
 
