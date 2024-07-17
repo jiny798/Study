@@ -11,6 +11,10 @@
 
 <br>
 
+## Spring Security
+
+#### [시큐리티 초기화 과정](https://github.com/jiny798/Study/tree/main/spring/src/main/java/hello/itemservice/subject/security/step1)
+
 ## JPA Study
 
 ## Vue Study
