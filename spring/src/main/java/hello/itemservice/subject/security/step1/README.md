@@ -231,10 +231,22 @@ WebSecurity -> FilterChainProxy
 
 <br>
 
-## DelegatingFilterProxy
-[@@@@그림]
-- Filter는 원래 WAS에서 생성되고 종룔되는 것으로 스프링 관련 기술(EX. 의존성주입)을 사용할 수 없다
-- 스프링에서 필터를 사용하면서, 스프링 기술을 사용하기 위해 만든것이 DelegatingFilterProxy
+### Filter 그리고 DelegatingFilterProxy 의 역할 
+
+사용자 요청이 오면 WAS에서 생성된 필터를 거쳐서 서블릿에서 처리하고,
+다시 필터를 거쳐 응답을 한다
+
+요청 >> 필터1 >> 필터2 >> 필터3... >> 서블릿 
+
+응답 << 필터1 << 필터2 << 필터3... << 서블릿 
+
+WAS는 스프링 영역이 아니기 때문에, 여기에 필터를 만든다면 스프링의 DI, AOP 등 기술을 사용할 수 없다.
+그래서 DelegatingFilterProxy 라는 필터를 만들고, 해당 Proxy필터에서  (IOC 안의)FilterChainProxy 빈을 스프링
+빈을 찾아 요청을 위임한다
+
+그럼 필터인 동시에, 스프링의 기술을 사용할 수 있게 되는 것이다
+
+
 
 
 
