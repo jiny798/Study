@@ -98,7 +98,7 @@ String targetUrl = savedRequest.getRedirectUrl(); // continue 또는 설정한 �
 > 또한 아래와 같이, /test/test?continue 또는  /test/test?param1=y 파라미터를 안붙이고
 > 
 > 그냥 /test/test 를 보냈을 때 테스트 결과, RequestCacheAwareFilter 에서 SavedRequest를 사용하지는 않지만, 로그인에는 지장이 없는 것으로 보인다.
-
+>
 
 ```java
 
