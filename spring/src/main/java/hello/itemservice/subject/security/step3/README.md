@@ -65,3 +65,13 @@ setAuthenticated(boolean) : 인증 상태 설정
 
 AuthenticationFilter 에서 인증 완료된 Authentication 을 Context에 저장한다.
 
+
+-------------------------------------
+
+#### 디버깅해보면 좋은 클래스 
+
+- AbstractAuthenticationProcessingFilter
+- UsernamePasswordAuthenticationFilter - attemptAuthentication() 
+    - 사용자 요청으로 토큰(UsernamePasswordAuthenticationToken)만들어 AuthenticationManager 에 전달 
+- ProvierManager (AuthenticationManager 구현체)
+- DaoAuthenticationProvider (AuthenticationProvider 구현체)
