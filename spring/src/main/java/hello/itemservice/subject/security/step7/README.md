@@ -17,6 +17,9 @@
 - 해당 요청은 서버에 본요청을 바로 보내서, 응답의 헤더를 보고 브라우저에서
 교차 출처 리소스를 사용해도 되는지 판단하는 방식 
 
+- 요청을 보낼 때, ORIGIN을 명시해야 하며, 서버에서 받은 Access-Control-Allow-Origin 헤더 값을 보고,
+브라우저에서 판단하여 CORS 가 작동하는 방식 
+
 [조건]
 - GET,POST,HEAD 중 한가지 메서드 사용
 - 헤더는 Accept, Accept-Language, Content-Language, Content-Type, DPR, Downlink, Save-Data, Viewport-Width Width 만 가능
@@ -33,7 +36,7 @@
 
 [흐름도]
 1. JS ----> 브라우저 : JS에서 fetch 함수로 요청
-2. 브라우저 -----> Server : 브라우저에서 OPTION 메서드로 요청
+2. 브라우저 -----> Server : 브라우저에서 OPTIONS 메서드와 ORIGIN 헤더 포함하여 서버로 전송
 3. 브라우저 <---- Server : 서버에서 200 응답, Access-Control-Allow-Origin:*
-4. CORS 관련 헤더 값을 보고, 출처가 다르지만 리소스 공유가 가능하다고 판단하여 실제 요청 전송
+4. 서버에서 받은 CORS 관련 헤더 값과 기존 요청의 헤더(ORIGIN)을 보고, 출처가 다르지만 리소스 공유가 가능하다고 판단
 5. 브라우저 -----> Server : 실제 요청 전송
