@@ -40,3 +40,33 @@
 3. 브라우저 <---- Server : 서버에서 200 응답, Access-Control-Allow-Origin:*
 4. 서버에서 받은 CORS 관련 헤더 값과 기존 요청의 헤더(ORIGIN)을 보고, 출처가 다르지만 리소스 공유가 가능하다고 판단
 5. 브라우저 -----> Server : 실제 요청 전송
+
+
+<br>
+<br>
+
+
+### CSRF 
+- CSRF는 쿠키같은 경우 요청 시 자동으로 전달되기 때문에, 사용자가 의도하지 않은 요청을 서버로 전송하게 하는 공격이다
+
+[흐름도]
+1. 사용자 ----> 웹사이트 : 사용자가 웹사이트(a.com)에 로그인 완료
+2. 공격자 ----> 사용자 : 공격자가 사용자에게(attack.com) 링크 전달
+3. attack.com 에는 a.com/upload 와 같은 이미지 태그가 있다
+4. 사용자가 해당 태그를 누르면 attack.com 에서 a.com/upload 와 같은 링크 실행
+5. 쿠기가 자동으로 전달되어, 로그인되었다고 판단해 원치않는 a.com/upload 가 실행됨
+
+```java
+@Bean
+SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
+	http.csrf(Customizer.withDefaults());
+	//http.csrf(csrf -> csrf.ignoringRequestMatchers("/test/*")); // 특정 url csrf 보호 제외 
+	return http.build();
+}
+```
+- csrf 기능은 기본적으로 활성화 
+- CSRF용 토큰이 클라이언트마다 발급되고, 클라이언트의 세션에 저장된다.
+- 클라이언트는 Form 그리고 모든 변경 요청에 해당 토큰을 같이 전달해야 한다.
+  - 변경 요청 : POST, PUT, DELETE 4
+- CSRF 공격은 브라우저가 자동으로 전달되는 특성을 방어하기 위함이니, 쿠기가 아닌 HTTP 매개변수나 헤더로 받는 것이 안전하다
+
