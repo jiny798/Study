@@ -70,3 +70,60 @@ SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
   - 변경 요청 : POST, PUT, DELETE 4
 - CSRF 공격은 브라우저가 자동으로 전달되는 특성을 방어하기 위함이니, 쿠기가 아닌 HTTP 매개변수나 헤더로 받는 것이 안전하다
 
+
+<br>
+<br>
+
+
+### Samesite 속성 
+
+- SameSite 는 CSRF 공격을 방어하는 방법 중 하나로, SameSite 속성을 통해 크로스 사이트 간 쿠키 전송을 제어할 수 있다
+- Security는 세션 쿠키 생성을 관리하지 않고, Spring Session 에서 SameSite 속성을 변경하도록 지원한다
+
+<br>
+
+### Samesite 속성
+
+#### "Strict" : 동일한 사이트만 허용하고, 크로스 사이트간 쿠키가 전송되지 않는다.
+1. 나의 사이트 "a.com" 에 로그인
+2. "a.com" 에 대해서는 쿠키 전송됨
+3. 내가 b.com 사이트 입장 (공격자가 제공한 사이트라고 가정)
+4. b.com 에서 a.com 링크를 클릭
+5. b에서 출발했기 때문에 a.com 에 쿠키가 전송되지 않음
+
+
+#### "Lax" : 동일 사이트 및 Top Level Navigation 에서 오는 읽기 요청인 경우에만 쿠키 전송을 허용하고, 나머지는 Strict 처럼 처리
+
+- 위 Strict 과정 중 b.com 에서  a.com 링크를 클릭할 때, 읽기 요청만 쿠키 전송
+- 즉 \<a> 를 클릭하거나 window, location, replace,302 다이렉트 등 이동은 쿠키 전송
+- 나머지 img 태그 , iframe, AJAX 인 경우는 쿠키 전송하지 않음 
+
+
+#### "None" : 크로스 사이트간 쿠키 전송 허용
+<br>
+
+### Same Site 속성 설정 
+```groovy
+implementation group: 'org.springframework.session', name: 'spring-session-core', version: '3.2.1'
+```
+```java
+@Configuration
+@EnableSpringHttpSession // JSESSIONID(WAS에서 관리) -> SESSION(스프링) 으로 변경,
+public class HttpSessionConfig {
+
+	@Bean
+	public CookieSerializer cookieSerializerCustomizer() {
+		DefaultCookieSerializer serializer = new DefaultCookieSerializer();
+		serializer.setUseSecureCookie(true); // 보안 쿠키 사용 - 스크립트 언어로 접근 불가
+		serializer.setUseHttpOnlyCookie(true); // HTTP 통신에만 사용
+		serializer.setSameSite("Strict"); // Same Site 강도 설정
+
+		return serializer; // SESSION 쿠키만을 의미
+	}
+
+	@Bean
+	public SessionRepository<MapSession> sessionRepository(){
+		return new MapSessionRepository(new ConcurrentHashMap<>());
+	}
+}
+```

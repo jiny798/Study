@@ -28,6 +28,9 @@ dependencies {
 
     // Spring Boot3 에서 Security6 로 설정된다
     implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    //same site
+    implementation group: 'org.springframework.session', name: 'spring-session-core', version: '3.2.1'
 }
 
 tasks.named('test') {
