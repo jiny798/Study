@@ -16,7 +16,7 @@
 #### [시큐리티 초기화 과정](https://github.com/jiny798/Study/tree/main/spring/src/main/java/hello/itemservice/subject/security/step1)
 #### [인증 프로세스](https://github.com/jiny798/Study/blob/main/spring/src/main/java/hello/itemservice/subject/security/step2/README.md)
 #### [인증 아키텍처](https://github.com/jiny798/Study/tree/main/spring/src/main/java/hello/itemservice/subject/security/step3)
-
+#### [악용 보호](https://github.com/jiny798/Study/blob/main/spring/src/main/java/hello/itemservice/subject/security/step7/README.md)
 
 ## JPA Study
 
