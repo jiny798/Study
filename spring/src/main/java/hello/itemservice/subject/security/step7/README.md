@@ -76,6 +76,20 @@ SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
 #### CSRF 디버깅 포인트
 
 [CsrfFilter.class]
+```java
+DeferredCsrfToken deferredCsrfToken = this.tokenRepository.loadDeferredToken(request, response);
+request.setAttribute(DeferredCsrfToken.class.getName(), deferredCsrfToken);
+this.requestHandler.handle(request, response, deferredCsrfToken::get);
+if (!this.requireCsrfProtectionMatcher.matches(request)) {
+	if (this.logger.isTraceEnabled()) {
+		this.logger.trace("Did not protect against CSRF since request did not match "
+		+ this.requireCsrfProtectionMatcher);
+	}
+filterChain.doFilter(request, response);
+return;
+}
+```
+- DeferredCsrfToken : Supplier를 통해 토큰을 가져오는 것을 미룬다. 
 - request.getMethod() 에 따라 다음 필터로 진행할 것인지, CSRF 토큰을 생성할 것인지 진행 
 <br>
 
@@ -100,7 +114,7 @@ String actualToken = this.requestHandler.resolveCsrfTokenValue(request, csrfToke
 ```
 - csrfToken은 세션에 저장되어 있는 토큰 
 - actualToken 은 클라이언트로 보낸 토큰을 읽어 온 것 
-- 그리고 유효성 체크 시작
+- 그리고 유효성 체크 시작. 다르면 권한 에러를 발생시킨다
 
 
 <br>
