@@ -72,8 +72,40 @@ SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
 
 
 <br>
+
+#### CSRF 디버깅 포인트
+
+[CsrfFilter.class]
+- request.getMethod() 에 따라 다음 필터로 진행할 것인지, CSRF 토큰을 생성할 것인지 진행 
 <br>
 
+만약 인증이 필요한 경우, 로그인 페이지로 갈때, 다음 로직을 거친다
+
+[DefaultLoginPageConfigurer.class]
+- 로그인 페이지 자동 생성 객체 
+- 토큰은 기본적으로 세션에 저장되며, 임시로 request에 저장하고
+- request에 CSRF 토큰을 가져와서 hidden input 안에 넣어 주는 코드도 수행
+- 즉 MVC, 사용자 코드에서도 해당 토큰을 얻어낼 수 있음 
+```java
+// DefaultLoginPageConfigurer.class
+private Map<String, String> hiddenInputs(HttpServletRequest request) {
+    CsrfToken token = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
+    return (token != null) ? Collections.singletonMap(token.getParameterName(), token.getToken()) : Collections.emptyMap();
+}
+```
+
+```java
+CsrfToken csrfToken = deferredCsrfToken.get(); // 토큰을 얻음 
+String actualToken = this.requestHandler.resolveCsrfTokenValue(request, csrfToken); 
+```
+- csrfToken은 세션에 저장되어 있는 토큰 
+- actualToken 은 클라이언트로 보낸 토큰을 읽어 온 것 
+- 그리고 유효성 체크 시작
+
+
+<br>
+
+<br>
 
 ### Samesite 속성 
 
