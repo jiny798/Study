@@ -1,5 +1,5 @@
 
-### CORS (Cross Origin Resource Sharing 교차 출처 리소스 공유)
+### 1. CORS (Cross Origin Resource Sharing 교차 출처 리소스 공유)
 
 - 웹은 한 페이지에서 다른 웹 페이지의 데이터를 직접 불러오는 것을 제한하며, 이것은 "동일 출처 정책(Same-Origin Policy)"
 라고 한다
@@ -12,8 +12,8 @@
 
 <br>
 
-### CORS 종류
-1. Simple Request 
+### 2. CORS 종류
+2-1. Simple Request 
 - 해당 요청은 서버에 본요청을 바로 보내서, 응답의 헤더를 보고 브라우저에서
 교차 출처 리소스를 사용해도 되는지 판단하는 방식 
 
@@ -31,7 +31,7 @@
 
 <br>
 
-**2. Preflight request (예비요청)**
+**2-2. Preflight request (예비요청)**
 - Simple Request 조건에 맞지 않으면 모두 Preflight request 사용
 
 [흐름도]
@@ -46,7 +46,7 @@
 <br>
 
 
-### CSRF 
+### 3. CSRF 
 - CSRF는 쿠키같은 경우 요청 시 자동으로 전달되기 때문에, 사용자가 의도하지 않은 요청을 서버로 전송하게 하는 공격이다
 
 [흐름도]
@@ -73,7 +73,7 @@ SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
 
 <br>
 
-#### CSRF 디버깅 포인트
+#### 3-1. CSRF 디버깅 포인트
 
 [CsrfFilter.class]
 ```java
@@ -118,6 +118,24 @@ String actualToken = this.requestHandler.resolveCsrfTokenValue(request, csrfToke
 
 
 <br>
+
+#### 3-2. CSRF 토큰 쿠키에 저장 
+- 기본적으로 세션에 저장되지만, 쿠키에 저장하도록 변경 가능 
+
+```java
+@Bean
+SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
+	CookieCsrfTokenRepository csrfTokenRepository = new CookieCsrfTokenRepository();
+	http
+		.authorizeHttpRequests(auth -> auth
+			.requestMatchers("/csrf").permitAll()
+			.anyRequest().authenticated())
+		.formLogin(Customizer.withDefaults())
+		.csrf(csrf -> csrf.csrfTokenRepository(csrfTokenRepository));
+	return http.build();
+}
+```
+
 
 <br>
 
