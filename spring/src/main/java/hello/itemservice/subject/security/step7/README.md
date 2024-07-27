@@ -135,7 +135,8 @@ SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
 	return http.build();
 }
 ```
-
+- CookieCsrfTokenRepository.withHttpOnlyFalse() 로 설정하면 HTTPOnly 옵션을 off 할 수 있다.
+- csrfTokenRequestHandler() 로 핸들러도 교체할 수 있다
 
 <br>
 
