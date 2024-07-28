@@ -77,23 +77,74 @@ SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
 
 [CsrfFilter.class]
 ```java
-DeferredCsrfToken deferredCsrfToken = this.tokenRepository.loadDeferredToken(request, response);
-request.setAttribute(DeferredCsrfToken.class.getName(), deferredCsrfToken);
-this.requestHandler.handle(request, response, deferredCsrfToken::get);
-if (!this.requireCsrfProtectionMatcher.matches(request)) {
-	if (this.logger.isTraceEnabled()) {
-		this.logger.trace("Did not protect against CSRF since request did not match "
-		+ this.requireCsrfProtectionMatcher);
-	}
-filterChain.doFilter(request, response);
-return;
+@Override
+protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+        throws ServletException, IOException {
+	
+    // 1단계
+    DeferredCsrfToken deferredCsrfToken = this.tokenRepository.loadDeferredToken(request, response);
+    request.setAttribute(DeferredCsrfToken.class.getName(), deferredCsrfToken);
+    this.requestHandler.handle(request, response, deferredCsrfToken::get);
+
+    // 2단계
+    if (!this.requireCsrfProtectionMatcher.matches(request)) {
+        if (this.logger.isTraceEnabled()) {
+        this.logger.trace("Did not protect against CSRF since request did not match "
+        + this.requireCsrfProtectionMatcher);
+        }
+     filterChain.doFilter(request, response);
+     return;
+     }
+
+     // 3단계
+    CsrfToken csrfToken = deferredCsrfToken.get();
+    String actualToken = this.requestHandler.resolveCsrfTokenValue(request, csrfToken);
+    if (!equalsConstantTime(csrfToken.getToken(), actualToken)) {
+        boolean missingToken = deferredCsrfToken.isGenerated();
+        this.logger.debug(LogMessage.of(() -> "Invalid CSRF token found for " + UrlUtils.buildFullRequestUrl(request)));
+		
+        AccessDeniedException exception = (!missingToken) ? new InvalidCsrfTokenException(csrfToken, actualToken): new MissingCsrfTokenException(actualToken);
+        this.accessDeniedHandler.handle(request, response, exception);
+        return;
+     }
+	
+    filterChain.doFilter(request, response);
 }
 ```
+[주요 체크 사항]
 - DeferredCsrfToken : Supplier를 통해 토큰을 가져오는 것을 미룬다. 
 - request.getMethod() 에 따라 다음 필터로 진행할 것인지, CSRF 토큰을 생성할 것인지 진행 
+- csrfToken은 세션에 저장되어 있는 토큰
+- actualToken 은 클라이언트로 보낸 토큰을 읽어 온 것
+- 그리고 유효성 체크 시작. 다르면 권한 에러를 발생시킨다
+
+[흐름도]
+
+>주요 로직은 코드에 주석한 것처럼 크게 1,2,3 단계로 나눌 수 있다
+
+<strong>1단계</strong>
+
+1단계는 모든 요청마다 실행하는 공통 단계이다
+
+
+<strong>2단계</strong>
+
+Matcher 객체를 보면 다음과 같은 코드가 있다.
+```java
+private final HashSet<String> allowedMethods = new HashSet<>(Arrays.asList("GET", "HEAD", "TRACE", "OPTIONS"));
+```
+"GET", "HEAD", "TRACE", "OPTIONS" 요청은 CSRF 처리를 하지 않고, 다음 필터로 진행한다 
+
+<strong>3단계</strong>
+
+POST,DELETE 등 요청인 경우 실행된다고 볼 수 있다.
+토큰을 생성하는 단계이다
+
 <br>
 
-만약 인증이 필요한 경우, 로그인 페이지로 갈때, 다음 로직을 거친다
+<br>
+
+그럼 클라이언트는 해당 토큰을 언제 받을까, 만약 인증이 필요한 경우, 로그인 페이지로 갈때, 다음 로직을 거친다
 
 [DefaultLoginPageConfigurer.class]
 - 로그인 페이지 자동 생성 객체 
@@ -107,14 +158,6 @@ private Map<String, String> hiddenInputs(HttpServletRequest request) {
     return (token != null) ? Collections.singletonMap(token.getParameterName(), token.getToken()) : Collections.emptyMap();
 }
 ```
-
-```java
-CsrfToken csrfToken = deferredCsrfToken.get(); // 토큰을 얻음 
-String actualToken = this.requestHandler.resolveCsrfTokenValue(request, csrfToken); 
-```
-- csrfToken은 세션에 저장되어 있는 토큰 
-- actualToken 은 클라이언트로 보낸 토큰을 읽어 온 것 
-- 그리고 유효성 체크 시작. 다르면 권한 에러를 발생시킨다
 
 
 <br>
