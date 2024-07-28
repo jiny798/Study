@@ -125,6 +125,29 @@ protected void doFilterInternal(HttpServletRequest request, HttpServletResponse 
 <strong>1단계</strong>
 
 1단계는 모든 요청마다 실행하는 공통 단계이다
+DeferredCsrfToken 안에 실제 CsrfToken 변수를 가지고 있으며, get 하기 전까지는 실제 토큰을 가져오지 않는다. 실제로 필요한 시점에 호출하도록 하여 미루는 것이다.
+
+this.requestHandler.handle 에서 Supplier로 한번 더 감싸고,
+```java
+@Override
+public void handle(HttpServletRequest request, HttpServletResponse response,
+			Supplier<CsrfToken> deferredCsrfToken) {
+	Assert.notNull(request, "request cannot be null");
+	Assert.notNull(response, "response cannot be null");
+	Assert.notNull(deferredCsrfToken, "deferredCsrfToken cannot be null");
+
+	request.setAttribute(HttpServletResponse.class.getName(), response);
+	CsrfToken csrfToken = new SupplierCsrfToken(deferredCsrfToken);
+	request.setAttribute(CsrfToken.class.getName(), csrfToken);
+	String csrfAttrName = (this.csrfRequestAttributeName != null) ? this.csrfRequestAttributeName
+				: csrfToken.getParameterName();
+	request.setAttribute(csrfAttrName, csrfToken);
+}
+```
+이 지연된 객체를 request에 저장한다. 그리고 로그인 페이지를 보여줘야 할 때 hiden input 에 토큰을 저장할 때 사용하기도 함
+
+csrfRequestAttributeName 이 null 이라면, 실제 토큰을 호출하여 파라미터 이름을 가져온다
+
 
 
 <strong>2단계</strong>
@@ -138,7 +161,21 @@ private final HashSet<String> allowedMethods = new HashSet<>(Arrays.asList("GET"
 <strong>3단계</strong>
 
 POST,DELETE 등 요청인 경우 실행된다고 볼 수 있다.
-토큰을 생성하는 단계이다
+
+실제 토큰을 얻는 부분이다
+
+쿠키 또는 세션에서 토큰을 가져온다.
+만약 인증을 받지 않아 첫 요청이면 세션에 없다. 
+그럼 새로운 토큰을 만들어 발급하고, 세션에 새로 저장한다 
+
+이후, 클라에서 온 토큰과 실제 토큰을 비교하는 로직을 수행 
+
+-> 클라 토큰은 _csrf 파라미터 네임 또는 X-CSRF-TOKEN 헤더 네임으로 읽어 본다 . (변경 가능)
+
+-> 실패시 권한 거부 
+
+
+
 
 <br>
 
