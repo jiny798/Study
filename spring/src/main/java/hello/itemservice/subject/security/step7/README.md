@@ -146,7 +146,7 @@ public void handle(HttpServletRequest request, HttpServletResponse response,
 ```
 이 지연된 객체를 request에 저장한다. 그리고 로그인 페이지를 보여줘야 할 때 hiden input 에 토큰을 저장할 때 사용하기도 함
 
-csrfRequestAttributeName 이 null 이라면, 실제 토큰을 호출하여 파라미터 이름을 가져온다
+csrfRequestAttributeName 이 null 이라면, 실제 토큰을 호출하여 파라미터 이름을 가져오는데, 이때 실제 토큰을 불러오게 되면서, Deferred 효과는 사라진다
 
 
 
