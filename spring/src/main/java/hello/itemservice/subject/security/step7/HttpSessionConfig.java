@@ -13,8 +13,8 @@ import org.springframework.session.web.http.DefaultCookieSerializer;
 import org.springframework.session.MapSession;
 import org.springframework.session.SessionRepository;
 
-@Configuration
-@EnableSpringHttpSession // JSESSIONID(WAS에서 관리) -> SESSION(스프링) 으로 변경,
+// @Configuration
+// @EnableSpringHttpSession // JSESSIONID(WAS에서 관리) -> SESSION(스프링) 으로 변경,
 public class HttpSessionConfig {
 
 	@Bean

@@ -9,8 +9,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 
-@EnableWebSecurity
-@Configuration
+// @EnableWebSecurity
+// @Configuration
 public class SecurityConfig {
 	// http.csrf(Customizer.withDefaults());
 	// http.csrf(csrf -> csrf.ignoringRequestMatchers("/test/*"));
