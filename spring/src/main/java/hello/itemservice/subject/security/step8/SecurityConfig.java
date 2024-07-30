@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -17,6 +18,8 @@ import org.springframework.security.web.access.expression.WebExpressionAuthoriza
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 
+
+@EnableMethodSecurity
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
@@ -70,6 +73,30 @@ public class SecurityConfig {
 
 
 	//SecurityMatcher
+	// @Bean
+	// SecurityFilterChain filterChain1(HttpSecurity http, ApplicationContext context) throws Exception {
+	//
+	// 	http
+	// 		.authorizeHttpRequests(auth -> auth
+	// 			.anyRequest().authenticated())
+	// 		.formLogin(Customizer.withDefaults());
+	//
+	// 	return http.build();
+	// }
+	//
+	// //SecurityMatcher
+	// @Bean
+	// @Order(1) // 위 필터체인에 @Order(1) 를 넣으면 다른 결과 발생, 생성 순서에 따라 처리
+	// SecurityFilterChain filterChain2(HttpSecurity http, ApplicationContext context) throws Exception {
+	//
+	// 	http.securityMatchers(matchers -> matchers.requestMatchers("/api/**", "/api2/**"))
+	// 		.authorizeHttpRequests(auth -> auth
+	// 			.anyRequest().permitAll())
+	// 		.formLogin(Customizer.withDefaults());
+	//
+	// 	return http.build();
+	// }
+
 	@Bean
 	SecurityFilterChain filterChain1(HttpSecurity http, ApplicationContext context) throws Exception {
 
@@ -82,21 +109,9 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	@Order(1) // 위 필터체인에 @Order(1) 를 넣으면 다른 결과 발생, 생성 순서에 따라 처리
-	SecurityFilterChain filterChain2(HttpSecurity http, ApplicationContext context) throws Exception {
-
-		http.securityMatchers(matchers -> matchers.requestMatchers("/api/**", "/api2/**"))
-			.authorizeHttpRequests(auth -> auth
-				.anyRequest().permitAll())
-			.formLogin(Customizer.withDefaults());
-
-		return http.build();
-	}
-
-	@Bean
 	public UserDetailsService userDetailsService(){
 		UserDetails user = User.withUsername("user").password("{noop}1111").roles("USER").build();
-
+		UserDetails admin = User.withUsername("admin").password("{noop}1111").roles("ADMIN","SECURE").build();
 		return new InMemoryUserDetailsManager(user);
 	}
 }
