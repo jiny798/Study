@@ -2,8 +2,10 @@ package hello.itemservice.subject.security.step8;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 @AllArgsConstructor
 public class Account {
 	private String owner;
