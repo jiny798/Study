@@ -9,6 +9,8 @@
 ### HttpSecurity.securityMatchers(Customizer<RequestMatcherConfigurer>)
 
 ### 메서드 기반 권한 부여
-
-
-### @PreFilter @PostFilter
+1. @PreAuthorize @PostAuthorize
+2. @PreFilter @PostFilter
+3. @Secured
+4. JSR-250
+5. 메타 주석 사용

@@ -20,9 +20,9 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 
 
-@EnableMethodSecurity
-@EnableWebSecurity
-@Configuration
+// @EnableMethodSecurity
+// @EnableWebSecurity
+// @Configuration
 public class SecurityConfig {
 
 	// @Bean
@@ -98,22 +98,22 @@ public class SecurityConfig {
 	// 	return http.build();
 	// }
 
-	@Bean
-	SecurityFilterChain filterChain1(HttpSecurity http, ApplicationContext context) throws Exception {
-
-		http
-			.authorizeHttpRequests(auth -> auth
-				.anyRequest().authenticated())
-			.formLogin(Customizer.withDefaults())
-			.csrf(AbstractHttpConfigurer::disable);
-
-		return http.build();
-	}
-
-	@Bean
-	public UserDetailsService userDetailsService(){
-		UserDetails user = User.withUsername("user").password("{noop}1111").roles("USER").build();
-		UserDetails admin = User.withUsername("admin").password("{noop}1111").roles("ADMIN","SECURE").build();
-		return new InMemoryUserDetailsManager(user);
-	}
+	// @Bean
+	// SecurityFilterChain filterChain1(HttpSecurity http, ApplicationContext context) throws Exception {
+	//
+	// 	http
+	// 		.authorizeHttpRequests(auth -> auth
+	// 			.anyRequest().authenticated())
+	// 		.formLogin(Customizer.withDefaults())
+	// 		.csrf(AbstractHttpConfigurer::disable);
+	//
+	// 	return http.build();
+	// }
+	//
+	// @Bean
+	// public UserDetailsService userDetailsService(){
+	// 	UserDetails user = User.withUsername("user").password("{noop}1111").roles("USER").build();
+	// 	UserDetails admin = User.withUsername("admin").password("{noop}1111").roles("ADMIN","SECURE").build();
+	// 	return new InMemoryUserDetailsManager(user);
+	// }
 }
