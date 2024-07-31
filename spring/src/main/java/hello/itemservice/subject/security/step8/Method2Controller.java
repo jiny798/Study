@@ -1,8 +1,10 @@
 package hello.itemservice.subject.security.step8;
 
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.security.DenyAll;
@@ -36,4 +38,23 @@ public class Method2Controller {
 	public String denyAll(){
 		return "denyAll";
 	}
+
+	@GetMapping("/isAdmin")
+	@IsAdmin
+	public String isAdmin(){
+		return "isAdmin";
+	}
+
+	@GetMapping("/owner")
+	@OwnerShip
+	public Account ownerShip(@RequestParam(value = "name") String name){
+		return new Account(name,false);
+	}
+
+	@GetMapping("/delete")
+	@PreAuthorize("@myAuthorizer.isUser(#root)")
+	public String delete(){
+		return "delete";
+	}
+
 }
