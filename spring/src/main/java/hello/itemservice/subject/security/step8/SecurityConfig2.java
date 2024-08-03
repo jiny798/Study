@@ -19,44 +19,44 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
-@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
-@EnableWebSecurity
-@Configuration
-public class SecurityConfig2 {
-
-	// @Bean
-	// public WebSecurityCustomizer webSecurityCustomizer(){
-	// 	return new WebSecurityCustomizer() {
-	// 		@Override
-	// 		public void customize(WebSecurity web) {
-	// 			web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-	// 		}
-	// 	};
-	// }
-	@Bean
-	SecurityFilterChain filterChain1(HttpSecurity http, ApplicationContext context) throws Exception {
-
-		http
-			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/images/**").permitAll()
-				.anyRequest().authenticated())
-			.formLogin(Customizer.withDefaults())
-			.csrf(AbstractHttpConfigurer::disable);
-
-		return http.build();
-	}
-
-	@Bean
-	public RoleHierarchy roleHierarchy() {
-		RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-		roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_USER\n" +
-			"ROLE_USER > ROLE_ANONYMOUS");
-		return roleHierarchy;
-	}
-	@Bean
-	public UserDetailsService userDetailsService(){
-		UserDetails user = User.withUsername("user").password("{noop}1111").roles("USER").build();
-		UserDetails admin = User.withUsername("admin").password("{noop}1111").roles("ADMIN","SECURE").build();
-		return new InMemoryUserDetailsManager(user,admin);
-	}
-}
+// @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
+// @EnableWebSecurity
+// @Configuration
+// public class SecurityConfig2 {
+//
+// 	// @Bean
+// 	// public WebSecurityCustomizer webSecurityCustomizer(){
+// 	// 	return new WebSecurityCustomizer() {
+// 	// 		@Override
+// 	// 		public void customize(WebSecurity web) {
+// 	// 			web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+// 	// 		}
+// 	// 	};
+// 	// }
+// 	@Bean
+// 	SecurityFilterChain filterChain1(HttpSecurity http, ApplicationContext context) throws Exception {
+//
+// 		http
+// 			.authorizeHttpRequests(auth -> auth
+// 				.requestMatchers("/images/**").permitAll()
+// 				.anyRequest().authenticated())
+// 			.formLogin(Customizer.withDefaults())
+// 			.csrf(AbstractHttpConfigurer::disable);
+//
+// 		return http.build();
+// 	}
+//
+// 	@Bean
+// 	public RoleHierarchy roleHierarchy() {
+// 		RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+// 		roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_USER\n" +
+// 			"ROLE_USER > ROLE_ANONYMOUS");
+// 		return roleHierarchy;
+// 	}
+// 	@Bean
+// 	public UserDetailsService userDetailsService(){
+// 		UserDetails user = User.withUsername("user").password("{noop}1111").roles("USER").build();
+// 		UserDetails admin = User.withUsername("admin").password("{noop}1111").roles("ADMIN","SECURE").build();
+// 		return new InMemoryUserDetailsManager(user,admin);
+// 	}
+// }
