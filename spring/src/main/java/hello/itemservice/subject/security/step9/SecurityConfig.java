@@ -22,13 +22,12 @@ import org.springframework.security.web.access.expression.WebExpressionAuthoriza
 public class SecurityConfig {
 
 	@Bean
-	SecurityFilterChain filterChain1(HttpSecurity http, ApplicationContext context) throws Exception {
-
+	SecurityFilterChain filterChain(HttpSecurity http, ApplicationContext context) throws Exception {
 		http
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers("/user").hasRole("USER")
-				.requestMatchers("/db").access(new WebExpressionAuthorizationManager("hasRole('DB)"))
-				.requestMatchers("/admin").hasRole("ROLE_ADMIN")
+				.requestMatchers("/db").access(new WebExpressionAuthorizationManager("hasRole('DB')"))
+				.requestMatchers("/admin").hasRole("ADMIN")
 				.anyRequest().authenticated())
 			.formLogin(Customizer.withDefaults())
 			.csrf(AbstractHttpConfigurer::disable);
