@@ -17,6 +17,8 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 
+import hello.itemservice.subject.security.step9.custom.CustomAuthorizationManager;
+
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
@@ -28,6 +30,7 @@ public class SecurityConfig {
 				.requestMatchers("/user").hasRole("USER")
 				.requestMatchers("/db").access(new WebExpressionAuthorizationManager("hasRole('DB')"))
 				.requestMatchers("/admin").hasRole("ADMIN")
+				.requestMatchers("/custom").access(new CustomAuthorizationManager())
 				.anyRequest().authenticated())
 			.formLogin(Customizer.withDefaults())
 			.csrf(AbstractHttpConfigurer::disable);
