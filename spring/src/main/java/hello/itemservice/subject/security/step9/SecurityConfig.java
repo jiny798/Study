@@ -19,8 +19,8 @@ import org.springframework.security.web.access.expression.WebExpressionAuthoriza
 
 import hello.itemservice.subject.security.step9.custom.CustomAuthorizationManager;
 
-@EnableWebSecurity
-@Configuration
+// @EnableWebSecurity
+// @Configuration
 public class SecurityConfig {
 
 	@Bean
