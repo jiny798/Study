@@ -18,6 +18,7 @@
 #### [인증 아키텍처](https://github.com/jiny798/Study/tree/main/spring/src/main/java/hello/itemservice/subject/security/step3)
 #### [악용 보호](https://github.com/jiny798/Study/blob/main/spring/src/main/java/hello/itemservice/subject/security/step7/README.md)
 #### [인가 구조](https://github.com/jiny798/Study/blob/main/spring/src/main/java/hello/itemservice/subject/security/step9/README.md)
+  - [메서드 인터셉터](https://github.com/jiny798/Study/blob/main/spring/src/main/java/hello/itemservice/subject/security/step9/methodmanager/methodAuthority.md)
 
 ## JPA Study
 
