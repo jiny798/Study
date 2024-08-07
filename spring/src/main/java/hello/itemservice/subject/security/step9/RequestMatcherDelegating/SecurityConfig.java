@@ -27,8 +27,8 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import hello.itemservice.subject.security.step9.custom.CustomAuthorizationManager;
 
-@EnableWebSecurity
-@Configuration
+// @EnableWebSecurity
+// @Configuration
 public class SecurityConfig {
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http, ApplicationContext context) throws Exception {

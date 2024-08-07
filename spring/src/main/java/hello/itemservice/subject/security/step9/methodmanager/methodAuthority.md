@@ -43,3 +43,6 @@ public void admin() { …}
     - @PreFilter 어노테이션에서 표현식을 평가하여 메소드 인자를 필터링 하는 구현체이다
 4. PostFilterAuthorizationMethodInterceptor
     - @PostFilter 어노테이션에서 표현식을 평가하여 보안 메서드에서 반환된 객체를 필터링 하는 구현체이다
+
+
+
