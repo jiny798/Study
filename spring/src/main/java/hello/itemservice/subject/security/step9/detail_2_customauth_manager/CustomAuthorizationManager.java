@@ -1,4 +1,4 @@
-package hello.itemservice.subject.security.step9.custom;
+package hello.itemservice.subject.security.step9.detail_2_customauth_manager;
 
 import java.util.function.Supplier;
 

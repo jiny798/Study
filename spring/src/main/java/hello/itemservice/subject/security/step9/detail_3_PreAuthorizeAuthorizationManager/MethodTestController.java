@@ -1,4 +1,4 @@
-package hello.itemservice.subject.security.step9.methodmanager;
+package hello.itemservice.subject.security.step9.detail_3_PreAuthorizeAuthorizationManager;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

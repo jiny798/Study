@@ -1,4 +1,4 @@
-package hello.itemservice.subject.security.step9.methodmanager;
+package hello.itemservice.subject.security.step9.detail_3_PreAuthorizeAuthorizationManager;
 
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;

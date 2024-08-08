@@ -1,4 +1,4 @@
-package hello.itemservice.subject.security.step9.RequestMatcherDelegating;
+package hello.itemservice.subject.security.step9.detail_1_RequestMatcherDelegating;
 
 import java.util.List;
 import java.util.function.Supplier;
