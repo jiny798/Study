@@ -31,6 +31,9 @@ dependencies {
 
     //same site
     implementation group: 'org.springframework.session', name: 'spring-session-core', version: '3.2.1'
+
+    //aop
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop', version: '3.2.2'
 }
 
 tasks.named('test') {
