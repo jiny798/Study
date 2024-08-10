@@ -24,6 +24,24 @@ verify() : check를 호출해서 반환된 값이 false를 가진 AuthorizationD
 <br>
 <br>
 
+### AuthorizationManager 종류 
+AuthorizationManager 를 상속받아 사용하는 Manager의 종류는 다음과 같다
+
+1. 요청 기반 권한 처리 관리자
+- 사용자가 특정 URL(ex."/user")로 요청했을 때, 해당 요청을 해당 사용자가 접근 가능한지 여부를 판단하는 매니저라고 볼 수 있다.
+   - RequestMatcherDelegatingAuthorizationManager
+   - AuthenticatedAuthorizationManager : 요청이 오면 해당 사용자가 인증이 되어있는지 체크하는 매니저
+   - AuthorityAuthorizationManager : 요청이 오면 해당 사용자가 특정 권한이 있는지 체크하는 매니저
+   - WebExpressionAuthorizationManager
+
+2. 메서드 기반 권한 처리 관리자
+    - PreAuthorizeAuthorizationManager : 메서드를 실행할 때, 특정 권한이 있는지 등 권한 여부를 체크하는 매니저 
+    - PostAuthorizeAuthorizationManager : 메서드 실행 후, 특정 권한이 있는지 등 권한 여부를 체크하는 매니저
+    - Jsr250AuthorizationManager
+    - SecuredAuthorizationManager
+
+<br>
+
 ### 인가 처리 준비 과정
 
 다음과 같이 경로별 접근 권한을 설정하면, 어떤 과정이 발생하는지 보자
