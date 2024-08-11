@@ -13,12 +13,12 @@
 
 ## Spring Security
 
-#### [시큐리티 초기화 과정](https://github.com/jiny798/Study/tree/main/spring/src/main/java/hello/itemservice/subject/security/step1)
-#### [인증 프로세스](https://github.com/jiny798/Study/blob/main/spring/src/main/java/hello/itemservice/subject/security/step2/README.md)
-#### [인증 아키텍처](https://github.com/jiny798/Study/tree/main/spring/src/main/java/hello/itemservice/subject/security/step3)
-#### [악용 보호](https://github.com/jiny798/Study/blob/main/spring/src/main/java/hello/itemservice/subject/security/step7/README.md)
-#### [인가 구조](https://github.com/jiny798/Study/blob/main/spring/src/main/java/hello/itemservice/subject/security/step9/README.md)
-  - [메서드 인터셉터](https://github.com/jiny798/Study/blob/main/spring/src/main/java/hello/itemservice/subject/security/step9/detail_3_PreAuthorizeAuthorizationManager/methodAuthority.md)
+#### [시큐리티 초기화 과정](https://github.com/jiny798/Study/blob/main/security/src/main/java/spring/security/step1/README.md)
+#### [인증 프로세스](https://github.com/jiny798/Study/blob/main/security/src/main/java/spring/security/step2/README.md)
+#### [인증 아키텍처](https://github.com/jiny798/Study/blob/main/security/src/main/java/spring/security/step3/README.md)
+#### [악용 보호](https://github.com/jiny798/Study/blob/main/security/src/main/java/spring/security/step7/README.md)
+#### [인가 구조](https://github.com/jiny798/Study/blob/main/security/src/main/java/spring/security/step9/README.md)
+  - [메서드 인터셉터](https://github.com/jiny798/Study/blob/main/security/src/main/java/spring/security/step9/detail_3_PreAuthorizeAuthorizationManager/methodAuthority.md)
 
 ## JPA Study
 
