@@ -5,6 +5,58 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ba5bc880-5a4c-44b4-8d91-c0ffebbed5f2" name="Changes" comment="PointCut 생성">
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step1/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step1/SecurityConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step1/img.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step1/img_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step1/img_2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step2/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step2/SecurityConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step2/TestController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step2/img.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step3/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step3/SecurityConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step3/SecurityController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step3/img.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step3/img_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step6/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step7/CsrfController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step7/HttpSessionConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step7/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step7/SecurityConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step8/Account.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step8/CustomRequestMatcher.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step8/CustomWebSecurity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step8/DataService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step8/IsAdmin.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step8/Method2Controller.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step8/MethodController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step8/MyAuthorizer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step8/OwnerShip.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step8/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step8/SecurityConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step8/SecurityConfig2.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step8/Step8Controller.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step8/img_2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step9/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step9/SecurityConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step9/detail_1_RequestMatcherDelegating/CustomRequestMatcherDelegatingAuthorizationManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step9/detail_1_RequestMatcherDelegating/RequestMatcherDelegatingAuthorizationManager.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step9/detail_1_RequestMatcherDelegating/SecurityConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step9/detail_2_customauth_manager/CustomAuthorizationManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step9/detail_3_PreAuthorizeAuthorizationManager/MethodDataService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step9/detail_3_PreAuthorizeAuthorizationManager/MethodTestController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step9/detail_3_PreAuthorizeAuthorizationManager/SecurityConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step9/detail_3_PreAuthorizeAuthorizationManager/img.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step9/detail_3_PreAuthorizeAuthorizationManager/method/MethodSecurityConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step9/detail_3_PreAuthorizeAuthorizationManager/method/MyPostAuthorizationManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step9/detail_3_PreAuthorizeAuthorizationManager/method/MyPreAuthorizationManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step9/detail_3_PreAuthorizeAuthorizationManager/methodAuthority.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step9/img.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step9/img_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step9/img_2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step9/img_3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../security/security/src/main/java/spring/security/step9/img_4.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
