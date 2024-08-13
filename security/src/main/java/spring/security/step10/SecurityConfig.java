@@ -10,6 +10,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
 
+import org.springframework.security.authorization.AuthorizationEventPublisher;
+import org.springframework.security.authorization.SpringAuthorizationEventPublisher;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -20,9 +23,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import spring.security.step10.custom_event.CustomAuthenticationSuccessEvent;
 
-import java.io.IOException;
+import spring.security.step10.authenticationevent.CustomAuthenticationProvider2;
+import spring.security.step10.authorizationevent.MyAuthorizationEventPublisher;
+import spring.security.step10.custom_event.CustomAuthenticationSuccessEvent;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -50,19 +54,30 @@ public class SecurityConfig {
                         .requestMatchers("/db").hasAuthority("ROLE_DB")
                         .requestMatchers("/admin").hasAuthority("ROLE_ADMIN")
                         .anyRequest().permitAll())
-                .formLogin(form -> form
-                        .successHandler((request, response, authentication) -> {
-                            // CustomAuthenticationSuccessEvent 을 발행하면, AuthenticationEvents 에서 수신하면 된다
-                            eventPublisher.publishEvent(new CustomAuthenticationSuccessEvent(authentication));
-
-                            // applicationContext.publishEvent(new CustomAuthenticationSuccessEvent(authentication));
-                            response.sendRedirect("/");
-                        }))
-                .csrf(AbstractHttpConfigurer::disable)
+                // .formLogin(form -> form
+                //         .successHandler((request, response, authentication) -> {
+                //             // CustomAuthenticationSuccessEvent 을 발행하면, AuthenticationEvents 에서 수신하면 된다
+                //             eventPublisher.publishEvent(new CustomAuthenticationSuccessEvent(authentication));
+                //
+                //             // applicationContext.publishEvent(new CustomAuthenticationSuccessEvent(authentication));
+                //             response.sendRedirect("/");
+                //         }))
+            .formLogin(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable);
 //                .authenticationProvider(authenticationProvider);
-                .authenticationProvider(customAuthenticationProvider2());
+//                 .authenticationProvider(customAuthenticationProvider2());
 
         return http.build();
+    }
+
+    /*@Bean
+    public AuthorizationEventPublisher authorizationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        return new SpringAuthorizationEventPublisher(applicationEventPublisher);
+    }*/
+
+    @Bean
+    public AuthorizationEventPublisher myAuthorizationEventPublisher(ApplicationEventPublisher applicationEventPublisher){
+        return new MyAuthorizationEventPublisher(new SpringAuthorizationEventPublisher(applicationEventPublisher), applicationEventPublisher);
     }
 
     @Bean

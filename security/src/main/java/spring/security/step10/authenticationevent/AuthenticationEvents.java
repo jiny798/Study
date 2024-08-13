@@ -1,4 +1,4 @@
-package spring.security.step10;
+package spring.security.step10.authenticationevent;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.event.*;
