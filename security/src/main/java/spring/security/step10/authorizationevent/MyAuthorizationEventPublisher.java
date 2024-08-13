@@ -32,6 +32,8 @@ public class MyAuthorizationEventPublisher implements AuthorizationEventPublishe
             this.delegate.publishAuthorizationEvent(authentication, object, decision);
             return;
         }
+
+        // 위에서 인증은 되었으니, 경로에 매칭된 권한만 검사해도, 특정 권한에 대해서 인가 처리를 할 수 있다
         if (shouldThisEventBePublished(decision)) {
             AuthorizationGrantedEvent<T> granted = new AuthorizationGrantedEvent<>(
                     authentication, object, decision);
@@ -41,10 +43,12 @@ public class MyAuthorizationEventPublisher implements AuthorizationEventPublishe
 
     private boolean shouldThisEventBePublished(AuthorizationDecision decision) {
         if (!(decision instanceof AuthorityAuthorizationDecision)) {
+            //AuthorizationDecision 은 성공 실패 true false 만 있고
+            // AuthorityAuthorizationDecision 은 권한 목록을 가지고 있음
+            // 예를 들어 /user는 ROLE_USER, ROLE_ADMIN 이 필요하다 등 정보를 AuthorityAuthorizationDecision 가 들고있음
             return false;
         }
-        // 기본적인 인가 처리 끝나고 decision 을 받아온다
-        // decision 에 사용자의 권한이 담겨있음
+
         Collection<GrantedAuthority> authorities = ((AuthorityAuthorizationDecision) decision).getAuthorities();
         for (GrantedAuthority authority : authorities) {
             if ("ROLE_ADMIN".equals(authority.getAuthority())) {
