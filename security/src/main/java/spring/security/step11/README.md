@@ -21,7 +21,7 @@
 
 2) HttpServlet3RequestFactory
 - Servlet 3API와의 통합을 제공하기 위해 Servlet3SecurityContextHolderAwareRequestWrapper 객체를 생성한다.
-- 위의 Servlet3SecurityContextHolderAwareRequestWrapper 는 SecurityContextHolderAwareRequestFilter 를 상속받은 구현체이다
+- Servlet3SecurityContextHolderAwareRequestWrapper 는 위의 SecurityContextAwareRequestWrapper 를 상속받은 구현체이다
 
 <br>
 
@@ -33,3 +33,36 @@
 
 
 <br>
+
+### 객체 구조 및 생성 과정 
+
+### SecurityContextHolderAwareRequestFilter
+![img_1.png](img_1.png)
+
+SecurityContextHolderAwareRequestFilter 는 authenticationManager, logoutHandler, ContextRepository 등
+
+즉 해당 필터가 인증,유지,로그아웃 등에 필요한 객체를 모두 가지고 있다 
+
+그리고 HttpServlet3RequestFactory 를 생성하는데, 그냥 생성하는 것이 아니라
+
+![img_2.png](img_2.png)
+
+위와 같이 HttpServlet3RequestFactory 는 set 메서드를 가지고 있으며, 
+
+생성할 때, set 메서드를 통해 인증에 필요한 객체를 전달받고 있다. (authenticationManager, logoutHandler 등등)
+
+그리고 HttpServlet3RequestFactory 는 Servlet3SecurityContextHolderAwareRequestWrapper 를 생성한다
+
+<br>
+
+Servlet3SecurityContextHolderAwareRequestWrapper 는 기존 request 객체를 래핑하고 있으며 ,
+
+
+![img_3.png](img_3.png)
+
+그리고 logout(), login() 등 인증 관련 메서드를 제공하고 있다.
+래핑 객체가 서블릿 또는 MVC 에서 사용될 수 있는 객체이다 
+
+- 래핑 클래스의 login을 호출하면 HttpServlet3RequestFactory 가 가지고 있는 AuthenticationManager 를 통해 인증 처리 
+- 래핑 클래스의 logout을 호출하면 HttpServlet3RequestFactory 가 가지고 있는 LogoutHandler 를 통해 로그아웃 처리 
+
