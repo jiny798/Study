@@ -9,7 +9,7 @@
 <br>
 <br>
 
-### Servlet 3+ 통합
+### 1. Servlet 3+ 통합
 인증 관련 기능을 필터가 아닌, 서블릿 영역에서도 할 수 있게 해준다
 
 1) SecurityContextHolderAwareRequestFilter
@@ -66,3 +66,56 @@ Servlet3SecurityContextHolderAwareRequestWrapper 는 기존 request 객체를 �
 - 래핑 클래스의 login을 호출하면 HttpServlet3RequestFactory 가 가지고 있는 AuthenticationManager 를 통해 인증 처리 
 - 래핑 클래스의 logout을 호출하면 HttpServlet3RequestFactory 가 가지고 있는 LogoutHandler 를 통해 로그아웃 처리 
 
+
+<br><br>
+
+### 2. MVC 통합
+
+Spring MVC 에서 @AuthenticationPrincipal을 메서드 인수에 사용하면 Spring Security와 독립적으로 사용할 수 있고,
+
+사용자의 정보인 Authentication.getPrincipal() 을 가져올 수 있다
+
+```java
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
+public Customer findUser(@AuthenticationPrincipal CustomUser customUser){...}
+```
+
+Authenticaion 내부에 선언된 CustomUser(principal) 를 가져온다
+
+<br>
+
+#### @AuthenticationPrincipal(expression="표현식")
+- 표현식으로 principal 내부의 속성을 가져올 수 있다
+
+```java
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
+public Customer findUser(@AuthenticationPrincipal(expression="customer") CustomUser customUser){...}
+```
+
+Authentication 내부의 principal(UserDetails 타입) 내부의 customer 라는 속성을 참고하는 것 
+
+<br>
+
+#### @AuthenticationPrincipal 메타 주석
+- @AuthenticationPrincipal 을 자체 주석으로 메타 주석화하여 Spring Security에 대한 종속성을 제거할 수 있다
+```java
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
+@Target({ElementType.PARAMETER, ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@AuthenticationPrincipal
+public @interface LoginUser {}
+```
+
+```java
+public void user(@LoginUser CustomUser customUser){...}
+```
