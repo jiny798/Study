@@ -2,8 +2,9 @@ package spring.security.step11;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Data @Getter
 @AllArgsConstructor
 public class MemberDto {
 	public String name;
