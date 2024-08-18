@@ -1,15 +1,9 @@
-package spring.security.step11;
+package spring.security.step12;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
-import org.springframework.security.authorization.AuthorizationEventPublisher;
-import org.springframework.security.authorization.SpringAuthorizationEventPublisher;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -20,12 +14,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import spring.security.step10.authenticationevent.CustomAuthenticationProvider2;
-import spring.security.step10.authorizationevent.MyAuthorizationEventPublisher;
+import spring.security.step12.dsl.MyCustomDsl;
 
-//@EnableWebSecurity
-//@RequiredArgsConstructor
-//@Configuration
+@EnableWebSecurity
+@RequiredArgsConstructor
+@Configuration
 public class SecurityConfig {
 
     @Bean
@@ -45,7 +38,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin").hasAuthority("ROLE_ADMIN")
                         .anyRequest().permitAll())
             .formLogin(Customizer.withDefaults())
-                .csrf(AbstractHttpConfigurer::disable);
+                .with(MyCustomDsl.customDsl(), myCustomDsl -> myCustomDsl.setFlag(true));
 
         return http.build();
     }
