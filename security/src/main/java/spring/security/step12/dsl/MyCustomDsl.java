@@ -3,6 +3,7 @@ package spring.security.step12.dsl;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 
 public class MyCustomDsl extends AbstractHttpConfigurer<MyCustomDsl, HttpSecurity> {
 
@@ -17,7 +18,9 @@ public class MyCustomDsl extends AbstractHttpConfigurer<MyCustomDsl, HttpSecurit
     public void configure(HttpSecurity http) throws Exception {
         MyCustomFilter myCustomFilter = new MyCustomFilter();
         myCustomFilter.setFlag(flag);
-        http.addFilterBefore(myCustomFilter , UsernamePasswordAuthenticationFilter.class);
+        //http.addFilterBefore(myCustomFilter , UsernamePasswordAuthenticationFilter.class);
+        // -> myCustomFilter 인자로 넘어온 request 가 AwareRequestFilter 에서 래핑된 객체라서 윗처럼 하면 처리가 안됨
+        http.addFilterBefore(myCustomFilter , SecurityContextHolderAwareRequestFilter.class);
         super.configure(http);
     }
 
