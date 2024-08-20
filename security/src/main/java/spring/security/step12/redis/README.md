@@ -17,8 +17,19 @@
 - Docker 설치 후
     - "docker run --name redis -p 6379:6379 -d redis" : 레디스 컨테이너 실행
    
-   
-   
+<br>
+
+
+#### 윈도우 도커 설치 방법
+
+- 제어판 - 프로그램 및 기능 - Windows 기능 켜키/끄기 
+    - Linux용 Windows 하위 시스템 체크
+    - 가상 머신 플랫폼 체크 
+    - 재시작
+- https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi
+    - 받은 파일로 리눅스 커널 업데이트 
+- 도커 공식 페이지에서 도커 데스크톱 설치
+
    
    
 ### 스프링부트 서버
