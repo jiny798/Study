@@ -42,6 +42,9 @@ dependencies {
 	//aop
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop', version: '3.2.2'
 
+	// redis
+	implementation 'org.springframework.session:spring-session-data-redis'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 tasks.named('test') {
