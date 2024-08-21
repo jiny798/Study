@@ -7,8 +7,10 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
+
+// 세션을 이제 레디스에 저장한다
 @Configuration
-@EnableRedisHttpSession
+@EnableRedisHttpSession // 세션 관리를 레디스가 하기 위해 활성화
 public class RedisConfig {
     @Value("${spring.data.redis.host}")
     private String host;

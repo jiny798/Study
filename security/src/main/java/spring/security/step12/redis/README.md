@@ -5,7 +5,9 @@
 - 시큐리티에서는 레디스 같은 분산 캐시를 사용하여 세션 정보를 여러 서버 간에 공유하고 안전하게 관리할 수 있다
 
 
+![alt text](./redis.PNG)
 
+- 위와 같이 서버 하나가 죽어도, 같은 세션 서버를 사용하기 때문에 지속적인 운영이 가능하다 
 
 ### 레디스 세션 서버
 
@@ -41,7 +43,7 @@ implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 ```
 
 ```java
-//
+// properties
 spring.data.redis.host=localhost
 spring.data.redis.port= 6379
 ```
@@ -64,3 +66,7 @@ public class RedisConfig {
 }
 
 ```
+
+
+
+
