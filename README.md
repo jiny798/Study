@@ -19,7 +19,10 @@
 #### [악용 보호](https://github.com/jiny798/Study/blob/main/security/src/main/java/spring/security/step7/README.md)
 #### [인가 구조](https://github.com/jiny798/Study/blob/main/security/src/main/java/spring/security/step9/README.md)
   - [메서드 인터셉터](https://github.com/jiny798/Study/blob/main/security/src/main/java/spring/security/step9/detail_3_PreAuthorizeAuthorizationManager/methodAuthority.md)
-  - [시큐리티 MVC,Servlet 에서 사용하기](https://github.com/jiny798/Study/blob/main/security/src/main/java/spring/security/step11/README.md)
+#### [시큐리티 MVC,Servlet 에서 사용하기](https://github.com/jiny798/Study/blob/main/security/src/main/java/spring/security/step11/README.md)
+#### [Custom DSL](https://github.com/jiny798/Study/blob/main/security/src/main/java/spring/security/step12/README.md)
+#### [Redis 세션 서버](https://github.com/jiny798/Study/blob/main/security/src/main/java/spring/security/step12/redis/README.md)
+
 
 ## JPA Study
 
