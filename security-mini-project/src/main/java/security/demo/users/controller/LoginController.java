@@ -21,10 +21,17 @@ public class LoginController {
         model.addAttribute("exception",exception);
         return "login/login";
     }
+
+    @GetMapping(value="/api/login")
+    public String restLogin(){
+        return "rest/login";
+    }
+
     @GetMapping(value="/signup")
     public String signup() {
         return "login/signup";
     }
+
 
     // Post(CSRF 방어)가 아닌 Get 으로 직접 만들어서 로그아웃 기능 구현 가능
     @GetMapping(value = "/logout")
