@@ -15,6 +15,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import security.demo.users.repository.UserRepository;
 
@@ -26,6 +27,8 @@ public class SecurityConfig {
 //    private final UserDetailsService userDetailsService;
     private final AuthenticationProvider authenticationProvider;
     private final AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> authenticationDetailsSource;
+    private final AuthenticationSuccessHandler successHandler;
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -37,7 +40,8 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login").permitAll()
-                        .authenticationDetailsSource(authenticationDetailsSource))
+                        .authenticationDetailsSource(authenticationDetailsSource)
+                        .successHandler(successHandler))
                 .authenticationProvider(authenticationProvider);
 //                .userDetailsService(userDetailsService);
 
