@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import security.demo.domain.dto.AccountContext;
+import security.demo.security.details.FormAuthenticationDetails;
 
 @Component("authenticationProvider")
 @RequiredArgsConstructor
@@ -25,6 +26,11 @@ public class FormAuthenticationProvider implements AuthenticationProvider {
 
         if(!passwordEncoder.matches(password, accountContext.getPassword())){
             throw new BadCredentialsException("Invalid password");
+        }
+
+        String secretKey = ((FormAuthenticationDetails)authentication.getDetails()).getSecretKey();
+        if(secretKey == null || !secretKey.equals("secret")){
+            throw new BadCredentialsException("Invalid secret");
         }
 
         return new UsernamePasswordAuthenticationToken(accountContext.getAccountDto(), null, accountContext.getAuthorities());
