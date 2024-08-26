@@ -24,7 +24,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import security.demo.security.filters.RestAuthenticationFilter;
-import security.demo.security.handler.FormAccessDeniedHandler;
+import security.demo.security.handler.*;
 import security.demo.users.repository.UserRepository;
 
 @EnableWebSecurity
@@ -36,8 +36,11 @@ public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final AuthenticationProvider restAuthenticationProvider;
     private final AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> authenticationDetailsSource;
-    private final AuthenticationSuccessHandler successHandler;
-    private final AuthenticationFailureHandler failureHandler;
+    private final FormAuthenticationSuccessHandler successHandler;
+    private final FormAuthenticationFailureHandler failureHandler;
+    private final RestAuthenticationSuccessHandler restSuccessHandler;
+    private final RestAuthenticationFailureHandler restFailureHandler;
+
 
 
     @Bean
@@ -89,6 +92,9 @@ public class SecurityConfig {
     private RestAuthenticationFilter restAuthenticationFilter(AuthenticationManager authenticationManager) {
         RestAuthenticationFilter restAuthenticationFilter = new RestAuthenticationFilter();
         restAuthenticationFilter.setAuthenticationManager(authenticationManager);
+        restAuthenticationFilter.setAuthenticationSuccessHandler(restSuccessHandler);
+        restAuthenticationFilter.setAuthenticationFailureHandler(restFailureHandler);
+
         return restAuthenticationFilter;
     }
 
