@@ -30,4 +30,13 @@ public class RestApiController {
     public AccountDto restAdmin(@AuthenticationPrincipal AccountDto accountDto) {
         return accountDto;
     }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
+        if(authentication != null){
+            new SecurityContextLogoutHandler().logout(request, response, authentication);
+        }
+        return "logout";
+    }
 }
