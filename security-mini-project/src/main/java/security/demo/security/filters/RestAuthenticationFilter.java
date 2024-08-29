@@ -31,14 +31,14 @@ public class RestAuthenticationFilter extends AbstractAuthenticationProcessingFi
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public RestAuthenticationFilter(HttpSecurity http) {
+    public RestAuthenticationFilter() { // HttpSecurity http
         // 인증 필터 작동 조건
         super(new AntPathRequestMatcher("/api/login", "POST"));
-        setSecurityContextRepository(getSecurityContextRepository(http));
+//        setSecurityContextRepository(getSecurityContextRepository(http));
 
     }
 
-    private SecurityContextRepository getSecurityContextRepository(HttpSecurity http) {
+    public SecurityContextRepository getSecurityContextRepository(HttpSecurity http) {
         SecurityContextRepository securityContextRepository = http.getSharedObject(SecurityContextRepository.class);
         if(securityContextRepository == null) {
             securityContextRepository = new DelegatingSecurityContextRepository(
