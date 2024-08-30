@@ -1,10 +1,9 @@
 package security.demo.users.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import security.demo.domain.Account;
+import security.demo.domain.entity.Account;
 import security.demo.users.repository.UserRepository;
 
 @Service
