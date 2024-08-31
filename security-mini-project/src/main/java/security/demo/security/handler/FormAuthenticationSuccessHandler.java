@@ -29,7 +29,7 @@ public class FormAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
         // 특정 url 진입하려다 인증 실패시, 내부적으로 savedRequest 에 저장해둠
         if (savedRequest != null) {
             String targetUrl = savedRequest.getRedirectUrl();
-            redirectStrategy.sendRedirect(request, response, targetUrl);
+            redirectStrategy.sendRedirect(request, response, getDefaultTargetUrl());
         }else{
             redirectStrategy.sendRedirect(request, response, getDefaultTargetUrl());
         }

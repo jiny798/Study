@@ -13,7 +13,9 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcherEntry;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+import security.demo.admin.repository.ResourcesRepository;
 import security.demo.security.mapper.MapBasedUrlRoleMapper;
+import security.demo.security.mapper.PersistentUrlRoleMapper;
 import security.demo.security.service.DynamicAuthorizationService;
 
 import java.util.List;
@@ -29,13 +31,15 @@ public class CustomDynamicAuthorizationManager implements AuthorizationManager<R
 
     // 현재 요청이 mappings 조건에 맞지 않아서 바로 return 하기 위해 생성
     private static final AuthorizationDecision DENY = new AuthorizationDecision(false);
-
+    private static final AuthorizationDecision ACCESS = new AuthorizationDecision(true);
 
     private final HandlerMappingIntrospector handlerMappingIntrospector;
 
+    private final ResourcesRepository resourcesRepository;
+
     @PostConstruct
     public void mapping() {
-        DynamicAuthorizationService dynamicAuthorizationService = new DynamicAuthorizationService(new MapBasedUrlRoleMapper());
+        DynamicAuthorizationService dynamicAuthorizationService = new DynamicAuthorizationService(new PersistentUrlRoleMapper(resourcesRepository)); // new MapBasedUrlRoleMapper()
         mappings = dynamicAuthorizationService.getUrlRoleMappings() // 서비스를 통해 Map객체를 반환 받고 
                 .entrySet().stream()
                 .map(entry -> new RequestMatcherEntry<>( // Map에 하나씩 꺼내서 순회
@@ -59,7 +63,7 @@ public class CustomDynamicAuthorizationManager implements AuthorizationManager<R
                         new RequestAuthorizationContext(request.getRequest(), matchResult.getVariables()));
             }
         }
-        return DENY;
+        return ACCESS;
     }
 
     @Override
