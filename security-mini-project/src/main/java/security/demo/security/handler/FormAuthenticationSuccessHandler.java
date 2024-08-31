@@ -15,8 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-@Component
-@RequiredArgsConstructor
+@Component("successHandler")
 public class FormAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final RequestCache requestCache = new HttpSessionRequestCache();
