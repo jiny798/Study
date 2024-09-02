@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import security.demo.admin.repository.ResourcesRepository;
 import security.demo.admin.service.ResourcesService;
 import security.demo.domain.entity.Resources;
+import security.demo.security.manager.CustomDynamicAuthorizationManager;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ import java.util.List;
 public class ResourcesServiceImpl implements ResourcesService {
 
     private final ResourcesRepository resourcesRepository;
+    private final CustomDynamicAuthorizationManager authorizationManager;
 
     @Transactional
     public Resources getResources(long id) {
@@ -32,10 +34,13 @@ public class ResourcesServiceImpl implements ResourcesService {
     @Transactional
     public void createResources(Resources resources){
         resourcesRepository.save(resources);
+        authorizationManager.reload();
     }
 
     @Transactional
     public void deleteResources(long id) {
         resourcesRepository.deleteById(id);
+        authorizationManager.reload();
+
     }
 }

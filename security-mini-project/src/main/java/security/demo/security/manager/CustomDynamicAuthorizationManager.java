@@ -37,17 +37,24 @@ public class CustomDynamicAuthorizationManager implements AuthorizationManager<R
 
     private final ResourcesRepository resourcesRepository;
 
+    DynamicAuthorizationService dynamicAuthorizationService;
+
     @PostConstruct
     public void mapping() {
-        DynamicAuthorizationService dynamicAuthorizationService = new DynamicAuthorizationService(new PersistentUrlRoleMapper(resourcesRepository)); // new MapBasedUrlRoleMapper()
-        mappings = dynamicAuthorizationService.getUrlRoleMappings() // 서비스를 통해 Map객체를 반환 받고 
+        dynamicAuthorizationService = new DynamicAuthorizationService(new PersistentUrlRoleMapper(resourcesRepository)); // new MapBasedUrlRoleMapper()
+
+        setMapping();
+    }
+
+    private void setMapping() {
+        mappings = dynamicAuthorizationService.getUrlRoleMappings() // 서비스를 통해 Map객체를 반환 받고
                 .entrySet().stream()
                 .map(entry -> new RequestMatcherEntry<>( // Map에 하나씩 꺼내서 순회
                         new MvcRequestMatcher(handlerMappingIntrospector, entry.getKey()), // 앤드포인트 URL
                         customAuthorizationManager(entry.getValue()))) // 권한 정보
                 .collect(Collectors.toList());
     }
-    
+
     // 권한 체크
     @Override
     public AuthorizationDecision check(Supplier<Authentication> authentication, RequestAuthorizationContext request) {
@@ -80,5 +87,10 @@ public class CustomDynamicAuthorizationManager implements AuthorizationManager<R
             // 그외에는 표현식으로 간주 - permitAll 같은 것을 처리하는 Manager
             return new WebExpressionAuthorizationManager(role);
         }
+    }
+
+    public synchronized void reload() {
+        mappings.clear();
+        setMapping();
     }
 }
