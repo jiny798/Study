@@ -16,9 +16,9 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import spring.security.step12.dsl.MyCustomDsl;
 
-@EnableWebSecurity
-@RequiredArgsConstructor
-@Configuration
+//@EnableWebSecurity
+//@RequiredArgsConstructor
+//@Configuration
 public class SecurityConfig {
 
     @Bean

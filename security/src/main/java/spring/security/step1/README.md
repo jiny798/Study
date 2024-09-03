@@ -1,11 +1,34 @@
-### Security 기초 이해
+### 프로젝트 환경
+- spring boot 3.2.8
+- Open JDK 17
 
-스프링 시큐리티를 사용한다면, 기본적인 웹 보안 기능이 자동으로 시스템에 연동되어 작동한다.
+```declarative
+implementation 'org.springframework.boot:spring-boot-starter-security'
+implementation 'org.springframework.boot:spring-boot-starter-web'
+```
 
-시큐리티 내부에 SpringBootWebSecurityConfiguration 클래스가 "자동 설정에 의한 기본 보안 설정 클래스"를 생성하게 되고,
+--------------------------
+### 초기화 작업
+스프링 시큐리티 라이브러리를 추가하면, 별도의 설정없이 기본적인 웹 보안 기능이 작동된다.
+
+[웹 보안 기능]
+- 기본적으로 모든 요청에 대해 인증 여부를 검사하고, 인증이 되어야 자원 접근이 가능하도록 한다
+- 인증(로그인) 방식은 Form, httpBasic 2가지를 제공한다
+- 인증을 할 수 있는 로그인 페이지가 제공된다
+- 인증 승인을 위한 기본 계정이 제공된다
+  - SecurityProperties 클래스에서 설정됨 (username : user, password : 랜덤문자열 )
+
+
+-----------------------------------------------------
+
+### 보안 설정 클래스
+
+기본적인 웹 보안 기능은 어떤 클래스에서 담당하는지 확인한다
+
+시큐리티 내부에 SpringBootWebSecurityConfiguration 클래스가 "기본 보안 설정 클래스(HttpSecurity)"를 생성하게 되고,
 해당 설정 클래스 덕분에 우리의 시스템에 기본적인 보안 기능이 연동되는 것이다.
 
-__그럼 어떤 기본 보안 설정 클래스(빈)을 생성하는지 보자__
+__그럼 SpringBootWebSecurityConfiguration 내부를 보자__
 
 ```java
 import org.springframework.boot.autoconfigure.security.ConditionalOnDefaultWebSecurity;
@@ -24,8 +47,15 @@ static class SecurityFilterChainConfiguration {
 
 ```
 - 먼저 HttpSecurity를 주입받아 사용한 뒤, SecurityFilterChain 를 반환하는 것을 볼 수 있다
-- SecurityFilterChain 이 바로 기본 보안 설정 클래스이다.
-- @ConditionalOnDefaultWebSecurity 은 조건이다. 아래를 보자
+- 즉 http를 통해 요청에 대한 보안 처리, 로그인 방식 등 보안 기능을 추가하고, http.build() 를 통해 SecurityFilterChain 을 반환한다
+- SecurityFilterChain 이 바로 기본 보안 설정 클래스이며 해당 클래스에 어떤 보안 기능이 작동해야하는지 다양한 필터들로 구성되어 있다.
+- **그리고 해당 필터들로 인해 기본적인 보안 기능이 연계되어 작동하는 것이다**
+
+-------------------------
+<br>
+
+__그럼 SecurityFilterChainConfiguration에 적용된 @ConditionalOnDefaultWebSecurity는 뭘까 ?__
+- @ConditionalOnDefaultWebSecurity 은 해당 메서드가 실행되기 위한 조건이다.
 
 #### @ConditionalOnDefaultWebSecurity
 ```java
@@ -59,9 +89,9 @@ class DefaultWebSecurityCondition extends AllNestedConditions {
 
 }
 ```
-- ConditionalOnClass, ConditionalOnMissingBean 이 있는데, 이 2개의 조건이 참이어야 한다
+- ConditionalOnClass, ConditionalOnMissingBean 이 있는데, 이 2개의 조건이 참이어야 최종적으로 기본 보안이 작동
 - ConditionalOnClass 는 설정된 클래스들이 클래스 경로에 존재하면 true (시큐리티 의존성을 추가하면 모두 추가된다)
-- ConditionalOnMissingBean 는 설정된 클래스를 직접 생성하지 않았다면 true 
+- ConditionalOnMissingBean 는 설정된 클래스를 직접 생성하지 않았다면 true 가 반환된다
 - 모두 참이면 위에서 언급한 defaultSecurityFilterChain 메서드를 실행할 수 있다
 
 ### 초기화 작업

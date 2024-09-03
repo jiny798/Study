@@ -10,8 +10,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
-// @EnableWebSecurity
-// @Configuration
+ @EnableWebSecurity
+ @Configuration
 public class SecurityConfig {
 
 	// 스프링 시큐리티7 버전부터는 람다 형식만 지원 할 예정
