@@ -94,21 +94,45 @@ class DefaultWebSecurityCondition extends AllNestedConditions {
 - ConditionalOnMissingBean 는 설정된 클래스를 직접 생성하지 않았다면 true 가 반환된다
 - 모두 참이면 위에서 언급한 defaultSecurityFilterChain 메서드를 실행할 수 있다
 
+---------------------------
+<br>
+
 ### 초기화 작업
 
-앱 실행 시, 인증,인가 처리 관련 설정을 하는 인터페이스는 SecurityBuilder 와 SecurityConfigurer 가 있다.
+앱 실행 시, 인증,인가 초기화 관련 설정을 하는 인터페이스는 SecurityBuilder 와 SecurityConfigurer 가 있다.
 
 - SecurityBuilder 는 웹 보안을 구성하는 클래스를 생성하며, 구현체로 WebSecurity, HttpSecurity, AuthenticationManagerBuilder 가 존재
 - SecurityConfigurer 는 HTTP 요청에 관한 보안처리를 담당하는 필터를 생성하고, 초기화 설정을 돕는다 (구현체는 SecurityContextConfigurer, FormLoginConfigurer, CsrfConfigurer 등)
-- HttpSecurity 가 SecurityConfigurer 를 참조하여 사용하며, SecurityConfigurer 를 통해 인증/인가 초기화 작업을 진행한다
+  - 시큐리티는 필터 기반의 보안 프레임워크이므로 필터는 중요하다 
+- SecurityBuilder(HttpSecurity) 가 (SecurityConfigurer)SecurityConfigurer 를 참조하며(사용하며)
+- **즉 SecurityBuilder에 의해서 SecurityConfigurer 를 통해 인증/인가 초기화 작업을 진행한다고 볼 수 있다**
 
 <br>
 
+그럼 앞서 말한 과정들을 정리하며, SecurityBuilder 와 SecurityConfigurer 를 정리해본다
+
+![img_3.png](img_3.png)
+- 자동 설정(AutoConfiguration)에 의해 Builder 를 생성한다
+- 빌더는 설정 클래스인 Configurer 를 생성한다
+- 이후 Configurer 의 init, configurer 메서드를 호출 하여, 초기화 작업을 수행한다 
+
+
+<br>
+
+-----------------------------
+실제 시큐리티의 Configurer 와 Filter 의 종류는 여러개가 있다
 ![img_2.png](img_2.png)
 
-
-- SecurityBuilder(HttpSecurity) -> SecurityConfigurer의 init,configure 메서드를 통해 인증/인가에 관련된 초기화 작업 진행
+- SecurityBuilder(HttpSecurity) -> SecurityConfigurer의 init,configure 메서드를 통해 인증/인가에 관련된 초기화 작업 진행할 때, 여러 필터들이 생성된다
 - 보안 기능을 처리하는 필터들이 생성되면 작업이 끝난다 
+- 필터의 종류는 CorsFilter, CsrfFilter, LogoutFilter, SecurityContextHolderFilter 등이 있다
+
+
+<br>
+
+-------------------------
+
+<br>
 
 ### 초기화 구체적인 순서 정리 
 
