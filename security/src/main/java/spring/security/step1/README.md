@@ -134,7 +134,7 @@ class DefaultWebSecurityCondition extends AllNestedConditions {
 
 <br>
 
-### 초기화 구체적인 순서 정리 
+### 초기화 구체적인 순서를 다시 정리하면 다음과 같다
 
 1. AutoConfiguration 의 build() 를 통해 빌더 클래스(SecurityBuilder) 생성
     - HttpSecurity(SecurityBuilder 를 상속받은) 객체 생성
@@ -145,12 +145,13 @@ class DefaultWebSecurityCondition extends AllNestedConditions {
     - 인자로 HttpSecurity(SecurityBuilder 타입)가 전달된다
     - init, configurer 안에서 각종 보안 필터들을 생성한다.
 
-### 초기화 과정 디버깅 해보기
+### 그럼 초기화 과정을 디버깅 해보자
 
 ### HttpSecurityConfiguration class 부터 시작 
 주석에 번호 따라가기 
 
 ```java
+// HttpSecurityConfiguration class
 @Bean(HTTPSECURITY_BEAN_NAME)
 @Scope("prototype")
 HttpSecurity httpSecurity() throws Exception{
@@ -164,9 +165,9 @@ HttpSecurity httpSecurity() throws Exception{
         webAsyncManagerIntegrationFilter.setSecurityContextHolderStrategy(this.securityContextHolderStrategy);
         // @formatter:off
         http // 여기 각 메서드 내부에서 필요한 Configurer 들을 생성한다 
-            .csrf(withDefaults())
+            .csrf(withDefaults()) // 1. HttpSecurity 의 csrf 설정 진행
             .addFilter(webAsyncManagerIntegrationFilter)
-            .exceptionHandling(withDefaults())
+            .exceptionHandling(withDefaults()) // 2. exceptionHandling 설정 진행
             .headers(withDefaults())
             .sessionManagement(withDefaults())
             .securityContext(withDefaults())
@@ -194,7 +195,9 @@ public HttpSecurity csrf(Customizer<CsrfConfigurer<HttpSecurity>>csrfCustomizer)
 
 ```
 - CsrfConfigurer는 SecurityConfigurer 를 상속받는다 
-- Configurer 설정 클래스를 이용해서 초기화 준비 작업을 진행한다는 것이 중요하며, 여기에서 Configurer들을 하나씩 생성한다
+- Configurer 설정 클래스를 생성해서 초기화 준비 작업을 진행한다는 것이 중요하다
+
+<br>
 
 ```java
 public HttpSecurity exceptionHandling(
@@ -206,10 +209,13 @@ public HttpSecurity exceptionHandling(
 
 - exceptionHandling 도 동일하게 Configurer 를 생성
 - HttpSecurityConfiguration 의 httpSecurity() 에서 이러한 작업을 10개 정도하면서, 인증 및 인가 작업을 진행한다
-- 그리고 HttpSecurity 를 반환해서 빈을 생성한다 
+- **그리고 HttpSecurity 를 반환해서 빈을 생성한다** 
 
-또한 이렇게 생성된 HttpSecurity 는 위에서 본 SecurityFilterChainConfiguration 의 
-defaultSecurityFilterChain 메서드 인자로도 사용된다 
+### 그럼 해당 HttpSecurity 빈을 주입받아 초기화 작업을 진행되는 곳이 있는데, 바로
+
+SecurityFilterChainConfiguration 의 defaultSecurityFilterChain 메서드 인자에 주입받아 사용되는 것이다 
+- HttpSecurity 에는 여러개의 Configurer를 가지고 있다 
+
 ### SpringBootWebSecurityConfiguration class
 ```java
 @Configuration(proxyBeanMethods = false)
@@ -227,17 +233,24 @@ static class SecurityFilterChainConfiguration {
 
 }
 ```
-- 즉 인증 및 인가 기초 작업을 마친 HttpSecurity 가 들어온다 
+- 인증 및 인가 기초 작업을 마친 HttpSecurity 가 들어오고
 - 그리고 formLogin, httpBasic 등 추가 작업을 진행하는데, 여기서도 관련 Configurer 들이 생성될 것이다.
 
 
 ![img.png](img.png)
 
-- 또한 http 내부에 configurers 클래스가 생성되어 있는 것을 볼 수 있다.
+- 내부에 configurers 클래스가 생성되어 있는 것을 볼 수 있다.
 - 그리고 http.build()에서 각 configurer 마다 init, configure 메서드를 호출하여 초기화를 본격적으로 진행한다
+
+> init 은 초기화 작업을 하고,  <br>
+> configure는 말그대로 설정을 하는데, 주로 보안 필터를 생성하여 셋팅하는 작업을 한다 <br>
+> configurer(설정클래스) 를 커스텀하게 직접 만들어 필터를 설정할 수 도 있다. (뒷장에서)
 
 <br>
 
+----------------------------------
+
+<br>
 
 ## HttpSecurity 
 - 결국 HttpSecurityConfiguration 에서 HttpSecurity(SecurityBuilder) 를 만들어내고
