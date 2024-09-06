@@ -253,9 +253,10 @@ static class SecurityFilterChainConfiguration {
 <br>
 
 ## HttpSecurity 
-- 결국 HttpSecurityConfiguration 에서 HttpSecurity(SecurityBuilder) 를 만들어내고
-- SecurityFilterChainConfiguration 에서 해당 HttpSecurity의 build() 를 사용해서, SecurityFilterChain 빈을 생성하는 것이 최종 목표
-- HttpSecurity 는 SecurityFilterChain 를 만든다.
+- 결국 HttpSecurityConfiguration 에서 HttpSecurity(SecurityBuilder) 를 만들고 초기화를 진행한다
+- SecurityFilterChainConfiguration 에서 HttpSecurity를 받아 다시 추가적인 초기화를 하고,
+- HttpSecurity의 build() 를 사용해서, SecurityFilterChain 빈을 생성하는 것이 최종 목표
+- **결론 : HttpSecurity 는 SecurityFilterChain 를 만든다.**
 
 > Configurer 내부에서 init, configure 메서드를 통해 초기화 작업을 진행하면
 각종 필터들이 만들어지게 되는데, 필터들은 SecurityFilterChain 빈안의 리스트에 저장된다.
@@ -271,15 +272,20 @@ SecurityFilterChain 는 인증/인가에 필요한 필터들을 가지고 있는
 ![img_1.png](img_1.png)
 - Matcher를 통해 적절한 SecurityFilterChain 을 찾고, 필터를 적용한다
 
+---------------------
+
+<br>
+
 ## WebSecurity [WebSecurity > HttpSecurity]
-- WebSecurityConfiguration 에서 WebSecurity 를 생성하고 초기화를 진행한다
+- HttpSecurity가 HttpSecurityConfiguration 에서 생성된 것처럼 
+- WebSecurityConfiguration(설정클래스) 에서 WebSecurity 를 생성하고 초기화를 진행한다
 - WebSecurity는 HttpSecurity가 만든 SecurityFilterChain 빈을 SecurityBuilder 에 다시 저장하고,
-- WebSecurity가 build()를 호출하면 SecurityFilterChain 을 꺼내서 FilterChainProxy 생성자에 전달하는 역할을 수행 
-- WebSecurity는 FilterChainProxy 를 만든다 
+- WebSecurity가 WebSecurity.build()를 호출하면 SecurityBuilder에서 SecurityFilterChain 을 꺼내서 FilterChainProxy 생성자에 전달하는 역할을 수행 
+- WebSecurity는 FilterChainProxy 를 만든다  (SecurityFilterChain 을 가지는 FilterChainProxy 생성)
 
 > 결국 FilterChainProxy 가 필터체인을 들고 있으니, 필터들을 실행시키는 첫 단추라고 볼 수 있다 
 
-> WebSecurity는 여러개의 HttpSecurity 가 만든 여러 SecurityFilterChain 을 가질 수 있다. (다중 보안 설정)
+> WebSecurity는  HttpSecurity 가 만든 여러개의 SecurityFilterChain 을 가질 수 있다. (다중 보안 설정)
 
 
 ### 돌아와서 SecurityFilterChain , FilterChainProxy
