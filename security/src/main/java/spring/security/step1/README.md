@@ -290,15 +290,15 @@ SecurityFilterChain 는 인증/인가에 필요한 필터들을 가지고 있는
 
 ### 돌아와서 SecurityFilterChain , FilterChainProxy
 - 요청이 오면 SecurityFilterChain 에 있는 필터들이 실행되는데, 사실 SecurityFilterChain 이 직접 수행하지 않고, 다른 클래스에게 위임한다
-- 바로 FilterChainProxy 가 필터들을 처리하는 것
+- 바로 FilterChainProxy 가 먼저 요청을 받은 후, 필터들로 보안 처리 진행 
 - 초기화 과정은 FilterChainProxy 생성하는 것이 최종 목표이고 FilterChainProxy 이 모든 필터를 가지고 있다
 
 -----------------------------------------------------------------------------
 
 <br>
-HttpScurity -> SecurityFilterChain
+HttpScurity -> SecurityFilterChain 생성
 
-WebSecurity -> FilterChainProxy
+WebSecurity -> FilterChainProxy 생성 (SecurityFilterChain를 포함)
 
 -----------------------------------------------------------------------------
 
@@ -318,6 +318,15 @@ WAS는 스프링 영역이 아니기 때문에, 여기에 필터를 만든다면
 빈을 찾아 요청을 위임한다
 
 그럼 필터인 동시에, 스프링의 기술을 사용할 수 있게 되는 것이다
+
+
+client > Filter1 > **DelegatingFilterProxy** > Filter3 > Servlet 
+
+- DelegatingFilterProxy 에서 FilterChainProxy 빈을 찾아 호출하여 위임한다 
+- FilterChainProxy 는 적절한 SecurityFilterChain 을 선택하여 보안 처리 로직을 진행한다
+
+
+
 
 
 ### 사용자 정의 API
