@@ -325,18 +325,60 @@ client > Filter1 > **DelegatingFilterProxy** > Filter3 > Servlet
 - DelegatingFilterProxy 에서 FilterChainProxy 빈을 찾아 호출하여 위임한다 
 - FilterChainProxy 는 적절한 SecurityFilterChain 을 선택하여 보안 처리 로직을 진행한다
 
+<br>
 
+-------
 
-
+<br>
 
 ### 사용자 정의 API
 
 HttpSecurity 에 제공하는 메서드로 사용자 정의 보안 설정을 할 수 있다.
 
+```java
+ @EnableWebSecurity
+ @Configuration
+public class SecurityConfig {
 
+    // 스프링 시큐리티7 버전부터는 람다 형식만 지원 할 예정
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                .formLogin(Customizer.withDefaults());
+        return http.build(); // 자동 설정에 의한 SecurityFilterChain 은 생성되지 않는다.
+    }
+}
 
+```
 
+- @EnableWebSecurity 를 선언한다 
+- 직접 httpSecurity의 build를 호출하면 자동 설정에 의한 기본 SecurityFilterChain 빈은 생성되지 않는다.
 
+<br>
+
+### 기본 계정 생성 방법
+
+```yaml
+spring:
+  security:
+   user:
+     name:user
+     password:1111
+     roles:USER
+```
+
+```java
+@Bean
+public InMemoryUserDetailsManager inMemoryUserDetailsManager(){
+	UserDetails user = User.withUsername("user")
+		.password("{noop}111")
+		.authorities("ROLE_USER")
+		.build();
+	return new InMemoryUserDetailsManager(user);
+}
+```
+
+- 메모리상에서 계정을 생성하여 유지할 수 있다
 
 
 
