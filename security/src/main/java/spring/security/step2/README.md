@@ -2,9 +2,41 @@
 
 ### - 폼인증
 
-- HTTP 기반의 폼 로그인 인증 메커니즘을 사용하는 API
+- HTTP 기반의 폼 로그인 인증 메커니즘을 활성화하는 API 를 제공
+- 스프링 시큐리티가 제공하는 로그인 페이지를 사용하여, 사용자 이름, 비밀번호가 포함된 로그인 페이지를 제공
+- 사용자가 form을 통해 사용자 이름, 비밀번호를 제공하면 스프링 시큐리티는 HttpServletRequest에서 이값을 읽어 처리한다
 - UsernamePasswordAuthenticationFilter 가 생성되어 폼 인증 처리를 담당한다.
 
+### 폼 인증 흐름도
+![img_1.png](img_1.png)
+
+1. 적절한 권한이 있는지 AuthorizationFilter 에서 검사하고, 권한이 없으면 예외발생
+2. ExceptionTranslationFilter 에서 캐치하고
+3. AuthenticationEntryPoint 를 통해 인증을 받을 수 있도록 로그인 페이지로 리다이렉트 
+
+### formLogin() API 사용법
+
+```JAVA
+HttpSecurity.formLogin ( httpSecurityFormLoginConfigurer->httpSecurityFormLoginConfigurer
+        .loginPage("/loginPage")
+        .loginProcessingUrl("/loginProc") // 이름,비밀번호를 검증할 URL (Form 태그의 action에 해당) 
+        .defaultSuccessUrl("/",[alwaysUse]) // 로그인 이후 이동할 페이지 (alwaysUse 가 true이면 무조건 해당 URL로 이동, 디폴트는 false)
+        .failureUrl("/failed") // 인증 실패 시 이동할 url
+        .usernameParameter("username") 
+        .passwordParameter("password")
+        .failureHandler(AuthenticationFailureHandler)
+        .successHandler(AuthenticationSuccessHandler)
+        .permitAll() // permitAll을 하면 내부적으로 failureUrl(), loginPage(), loginProcessingUrl() 에 대한 URL에 사용자 접근을 허용함 -> 누구나 접근이 가능해야하기 때문
+
+ );
+
+```
+
+<br>
+
+------
+
+<br>
 
 ### UsernamePasswordAuthenticationFilter
 
