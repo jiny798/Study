@@ -29,8 +29,119 @@ HttpSecurity.formLogin ( httpSecurityFormLoginConfigurer->httpSecurityFormLoginC
         .permitAll() // permitAll을 하면 내부적으로 failureUrl(), loginPage(), loginProcessingUrl() 에 대한 URL에 사용자 접근을 허용함 -> 누구나 접근이 가능해야하기 때문
 
  );
+```
+
+
+### formLogin 내부 설정 과정
+
+
+```java
+public HttpSecurity formLogin(Customizer<FormLoginConfigurer<HttpSecurity>> formLoginCustomizer) throws Exception {
+	formLoginCustomizer.customize(getOrApply(new FormLoginConfigurer<>()));
+	return HttpSecurity.this;
+}
+```
+- form 인증에 설정을 커스텀할 수 있도록 인자를 받고 있으며
+- 커스텀 과정에서 FormLoginConfigurer 를 생성한다
+- FormLoginConfigurer 생성자를 보자
+
+<br>
+
+```java
+public FormLoginConfigurer() {
+	super(new UsernamePasswordAuthenticationFilter(), null);
+	usernameParameter("username");
+	passwordParameter("password");
+}
+```
+- 사용자 이름과 비밀번호는 username, password 로 받고 있으며
+- 부모에게 UsernamePasswordAuthenticationFilter 를 전달하고 있다.
+- UsernamePasswordAuthenticationFilter 는 인증을 담당하는 필터 
+- FormLoginConfigurer 는 AbstractAuthenticationFilterConfigurer를 상속받고 있다
+- AbstractAuthenticationFilterConfigurer 내부를 살펴보자
+
+<br>
+
+AbstractAuthenticationFilterConfigurer
+![img_2.png](img_2.png)
+- 성공 처리 핸들러인 defaultSuccessHandler 가 무엇인지도 볼 수 있고
+
+```java
+// AbstractAuthenticationFilterConfigurer
+protected AbstractAuthenticationFilterConfigurer() {
+	setLoginPage("/login");
+}
+```
+- 기본 로그인 페이지도 볼 수 있다.
+- 이러한 값들은 제공되는 API로 모두 변경이 가능하다 
+
+```JAVA
+@Override
+public void init(B http) throws Exception {
+	updateAuthenticationDefaults();
+	updateAccessDefaults(http);
+	registerDefaultAuthenticationEntryPoint(http);
+}
+
+protected final void updateAuthenticationDefaults() {
+    if (this.loginProcessingUrl == null) {
+        loginProcessingUrl(this.loginPage);
+    }
+    if (this.failureHandler == null) {
+        failureUrl(this.loginPage + "?error");
+    }
+    LogoutConfigurer<B> logoutConfigurer = getBuilder().getConfigurer(LogoutConfigurer.class);
+    if (logoutConfigurer != null && !logoutConfigurer.isCustomLogoutSuccess()) {
+        logoutConfigurer.logoutSuccessUrl(this.loginPage + "?logout");
+    }
+}
 
 ```
+- 메서드 내부를 하나씩 보면 loginProcessingUrl, failureUrl 등을 설정하는 것을 알 수 있다
+
+<br>
+
+```JAVA
+	@Override
+	public void configure(B http) throws Exception {
+		PortMapper portMapper = http.getSharedObject(PortMapper.class);
+		if (portMapper != null) {
+			this.authenticationEntryPoint.setPortMapper(portMapper);
+		}
+		RequestCache requestCache = http.getSharedObject(RequestCache.class);
+		if (requestCache != null) {
+			this.defaultSuccessHandler.setRequestCache(requestCache);
+		}
+		this.authFilter.setAuthenticationManager(http.getSharedObject(AuthenticationManager.class));
+		this.authFilter.setAuthenticationSuccessHandler(this.successHandler); // 인증 성공 핸들러 
+		this.authFilter.setAuthenticationFailureHandler(this.failureHandler); // 인증 실패 핸들러
+		if (this.authenticationDetailsSource != null) {
+			this.authFilter.setAuthenticationDetailsSource(this.authenticationDetailsSource);
+		}
+		SessionAuthenticationStrategy sessionAuthenticationStrategy = http
+			.getSharedObject(SessionAuthenticationStrategy.class); // 세션 전략 
+		if (sessionAuthenticationStrategy != null) {
+			this.authFilter.setSessionAuthenticationStrategy(sessionAuthenticationStrategy);
+		}
+		RememberMeServices rememberMeServices = http.getSharedObject(RememberMeServices.class);
+		if (rememberMeServices != null) {
+			this.authFilter.setRememberMeServices(rememberMeServices);
+		}
+		SecurityContextConfigurer securityContextConfigurer = http.getConfigurer(SecurityContextConfigurer.class);
+		if (securityContextConfigurer != null && securityContextConfigurer.isRequireExplicitSave()) {
+			SecurityContextRepository securityContextRepository = securityContextConfigurer
+				.getSecurityContextRepository();
+			this.authFilter.setSecurityContextRepository(securityContextRepository);
+		}
+		this.authFilter.setSecurityContextHolderStrategy(getSecurityContextHolderStrategy());
+		F filter = postProcess(this.authFilter);
+		http.addFilter(filter);
+	}
+```
+- configure 에서 인증,인가 관련 핵심 클래스를 생성하고 공유할 수 있도록 설정한다 
+- 인증 성공,실패 처리를 하기위한 핸들러 설정, 세션 전략, RememberMe 설정 등을 하고 있는 것을 볼 수 있다
+- 마지막 작업으로는 http 에 필터를 추가하고 있다
+- 자세한 내용은 필터 장에서 설명
 
 <br>
 
