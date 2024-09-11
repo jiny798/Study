@@ -168,12 +168,89 @@ UsernamePasswordAuthenticationFilter 흐름도
    - RememberMeServices > RememberMeServices.loginFail 이호출된다
    - AuthenticationFailureHandler > 인증 실패 핸들러를 호출한다
 7. SessionAuthenticationStrategy : 새로운 로그인을 알리고, 세션 관련 작업 수행 
-8. SecurityContextHolder > Authentication을 SecurityContext 에 저장하고, SecurityContextHolder를 통해 SecurityContext를 세션에 저장
+8. SecurityContextHolder > Authentication을 SecurityContext 에 저장하고, SecurityContext를 SecurityContextHolder에 저장 그리고 SecurityContext를 세션에 저장
 9. RememberMeServices.loginSuccess 호출 (선택 - Remember-Me 가 설정된 경우에)
 10. ApplicationEventPublisher.publishEvent() 인증 성공 이벤트 게시
 11. AuthenticationSuccessHandler 호출 
 
+### 위의 과정을 디버깅
+```java
+// AbstractAuthenticationProcessingFilter
+	private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+        throws IOException, ServletException {
+    if (!requiresAuthentication(request, response)) { // /login 요청인지 Matcher 의 pattern 을 통해 확인
+        chain.doFilter(request, response);
+        return;
+    }
+    try {
+        // 인증을 시도 
+        Authentication authenticationResult = attemptAuthentication(request, response);
+        if (authenticationResult == null) {
+            // return immediately as subclass has indicated that it hasn't completed
+            return;
+        }
+        this.sessionStrategy.onAuthentication(authenticationResult, request, response);
+        // Authentication success
+        if (this.continueChainBeforeSuccessfulAuthentication) {
+            chain.doFilter(request, response);
+        }
+        successfulAuthentication(request, response, chain, authenticationResult);
+    }
+    catch (InternalAuthenticationServiceException failed) {
+        this.logger.error("An internal error occurred while trying to authenticate the user.", failed);
+        unsuccessfulAuthentication(request, response, failed);
+    }
+    catch (AuthenticationException ex) {
+        // Authentication failed
+        // 인증 실패 시 처리하는 과정 
+        unsuccessfulAuthentication(request, response, ex);
+    }
+}
+```
+- AbstractAuthenticationProcessingFilter 에서 인증 요청 처리 시작한다
+- 인증 성공 시, authenticationReulst 는 UsernamePasswordAuthenticationToken 타입으로   principal 필드에 UserDetail 을 가지고 있다
 
+```java
+// UsernamePasswordAuthenticationFilter
+	@Override
+	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+			throws AuthenticationException {
+		if (this.postOnly && !request.getMethod().equals("POST")) {
+			throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
+		}
+		String username = obtainUsername(request);
+		username = (username != null) ? username.trim() : "";
+		String password = obtainPassword(request);
+		password = (password != null) ? password : "";
+		UsernamePasswordAuthenticationToken authRequest = UsernamePasswordAuthenticationToken.unauthenticated(username,
+				password);
+		// Allow subclasses to set the "details" property
+		setDetails(request, authRequest);
+		return this.getAuthenticationManager().authenticate(authRequest);
+	}
+```
+- 전달받은 username, password 를 추출하여 인증받지 않은 UsernamePasswordAuthenticationToken 을 생성 
+- Manager 에게 인증을 위임한다 (Manager 역할은 인증 매니저 파트에서 자세히 설명  )
+
+```java
+	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
+			Authentication authResult) throws IOException, ServletException {
+		SecurityContext context = this.securityContextHolderStrategy.createEmptyContext();
+		context.setAuthentication(authResult); // Context에 인증 객체 저장 
+		this.securityContextHolderStrategy.setContext(context); // ContextHolder 에 Context 저장 
+		this.securityContextRepository.saveContext(context, request, response); // 세션에 Context 저장 
+		if (this.logger.isDebugEnabled()) {
+			this.logger.debug(LogMessage.format("Set SecurityContextHolder to %s", authResult));
+		}
+		this.rememberMeServices.loginSuccess(request, response, authResult);
+		if (this.eventPublisher != null) {
+			this.eventPublisher.publishEvent(new InteractiveAuthenticationSuccessEvent(authResult, this.getClass()));
+		}
+		this.successHandler.onAuthenticationSuccess(request, response, authResult);
+	}
+```
+- 세션에 인증 객체가 포함된 SecurityContext 를 저장한다
+- 성공 처리 핸들러 구현체는 SavedRequestAwareAuthenticationSuccessHandler 를 참고한다 
 
 <br>
 
