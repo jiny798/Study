@@ -151,19 +151,27 @@ protected final void updateAuthenticationDefaults() {
 
 ### UsernamePasswordAuthenticationFilter
 
-- 로그인 시 사용되는 
+- 스프링 시큐리티는 인증을 AbstractAuthenticationProcessingFilter 를 기본적으로 사용한다
+- UsernamePasswordAuthenticationFilter 는 AbstractAuthenticationProcessingFilter 를 상속 받아 attemptAuthentication() 메소드를 새로 오버라이드 한다
+- CustomAuthenticationFilter 를 만든다면 AbstractAuthenticationProcessingFilter 를 상속받아 attemptAuthentication() 를 구현해야한다
+- 참고로 인증 프로세스가 초기화될 때 로그인, 로그아웃 페이지 생성을 담당하는 DefaultLoginPageGeneratingFilter 와 DefaultLogoutPageGeneratingFilter 도 생성되어 초기화 된다
 
-로그인 요청 시, 로직 흐름
-1. AbstractAuthenticationProcessingFilter 에서 Matcher를 통해 로그인 요청인지 판단
-2. 로그인 요청이면 attemptAuthentication 메서드로 인증 시작 
-3. 전달받은 id,pw 로 UsernamePasswordAuthenticationToken 생성
-4. AuthenticationManager.authenticate() 로 인증 처리 시작
-5. 인증 성공 시, Authentication(UsernamePasswordAuthenticationToken) 에 UserDetail,권한이 담겨 반환
-6. SessionAuthenticationStrategy 세션 관련 작업 수행
-7. Authentication을 SecurityContext 에 저장하고, SecurityContextHolder를 통해 Context를 세션에 저장
-8. RememberMeServices.loginSuccess 호출 (선택)
-9. ApplicationEventPublisher.publishEvent() 인증 성공 이벤트 게시
-10. AuthenticationSuccessHandler 호출 
+UsernamePasswordAuthenticationFilter 흐름도
+1. 사용자가 **Get /login** 요청 
+2. **AbstractAuthenticationProcessingFilter** 에서 RequestMatcher를 통해 로그인 요청인지 판단 -> 아니면 chain.doFilter 로 다음 필터로 넘어감
+3. 로그인 요청이면 attemptAuthentication() 메서드로 인증 시작 
+4. 전달받은 username,password 로 **UsernamePasswordAuthenticationToken** 생성
+5. **AuthenticationManager**.authenticate(Token) 로 인증 처리 시작
+6. 인증 성공 시, Authentication(UsernamePasswordAuthenticationToken) 에 UserDetail, Authorities (권한)이 저장되어 반환된다
+   - 인증 실패 시, 다음 순서로 호출된다
+   - SecurityContextHolder >  SecurityContext가 삭제된다 : 악의적인 시도일 수도 있으니 그냥 제거해버리는 듯 
+   - RememberMeServices > RememberMeServices.loginFail 이호출된다
+   - AuthenticationFailureHandler > 인증 실패 핸들러를 호출한다
+7. SessionAuthenticationStrategy : 새로운 로그인을 알리고, 세션 관련 작업 수행 
+8. SecurityContextHolder > Authentication을 SecurityContext 에 저장하고, SecurityContextHolder를 통해 SecurityContext를 세션에 저장
+9. RememberMeServices.loginSuccess 호출 (선택 - Remember-Me 가 설정된 경우에)
+10. ApplicationEventPublisher.publishEvent() 인증 성공 이벤트 게시
+11. AuthenticationSuccessHandler 호출 
 
 
 
