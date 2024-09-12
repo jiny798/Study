@@ -254,6 +254,41 @@ UsernamePasswordAuthenticationFilter 흐름도
 
 <br>
 
+### HTTP Basic 인증
+
+- HTTP는 액세스 제어와 인증을 위한 프레임워크를 제공하며, 일반적으로 "Basic" 인증 방식을 제공한다
+- 인증 프로토콜은 HTTP 인증 헤더에 기술되어 있음 (RFC 7235) : 대부분 브라우저는 해당 인증을 할 수 있도록 내장하고 있다
+
+1. 클라이언트는 인증정보 없이 서버로 접속 요청 
+   - GET /home 요청보냈다고 가정  (클라이언트 -----> 서버)
+2. 서버가 클라이언트에게 인증요구를 보낼 때, 401 Unauthorized 응답과 함께, WWW-Authenticate 헤더를 기술해서 realm(보안영역)과 Basic 인증 방법을 보냄
+   - 401 응답, (헤더) **WWW-Authenticate : Basic realm="localhost"**  (클라이언트 <----- 서버)
+   - 어떤 인증을 해라라고 WWW-Authenticate 헤더에 기술하여 전달
+3. 클라이언트가 서버로 접속할 때 Base64 로 username 과 password를 인코딩하고 Authorization 헤더에 담아 요청  (클라이언트 -----> 서버)
+   - (헤더) Authorization: Basic TYwsxy3tYTRdw53WD=
+4. 성공적으로 완료되면 정상 코드를 반환한다 (클라이언트 <----- 서버)
+
+> base-64 인코딩된 값은 디코딩이 가능하기 때문에,
+> HTTP Basic 인증은 반드시 HTTPS 와 같이 TLS 기술과 함께 사용해야 한다 
+
+### httpBasic() API
+- 시큐리티는 Basic 인증을 통해 인증할 수 있도록 API를 제공 
+- 내부적으로 BasicAuthenticationFilter 가 생성되어 기본 인증 방식의 인증 처리를 담당하게 된다
+
+```JAVA
+HttpSecurity.httpBasic(httpSecurityHttpBasicConfigurer->httpSecurityHttpBasicConfigurer
+    .realmName(“security") // HTTP 기본 영역을설정한다
+    .authenticationEntryPoint((request,response,authException)->{}) //인증실패시 호출되는 AuthenticationEntryPoint이다
+    //기본값은 "Realm"영역으로 BasicAuthenticationEntryPoint가 사용된다
+);
+
+```
+- 인증 실패 시, **로그인 페이지로 보내는 역할**을 AuthenticationEntryPoint 가 한다
+
+
+
+<br>
+
 ### RememberMe 인증
 
 - 로그인 시, 인증 정보를 기억하는 기능
