@@ -2,8 +2,8 @@
 
 
 #### [MVC 프레임워크 만들기](https://github.com/jiny798/Study/blob/main/mvc-framework/README.md)
-#### [데이터 전송 방법 GET(Query-parameter) , POST(FORM), JSON](https://github.com/jiny798/Study/blob/main/mvc-study/src/main/java/hello/itemservice/subject/request_response/basic/README.md) 
-#### [스프링에서 다양한 방식으로 요청,응답이 가능한 이유](https://github.com/jiny798/Study/blob/main/mvc-study/src/main/java/hello/itemservice/subject/request_response/spring/README.md)
+#### [데이터 전송 GET(Query-parameter) , POST(FORM), JSON](https://github.com/jiny798/Study/blob/main/mvc-study/src/main/java/hello/itemservice/subject/request_response/basic/README.md) 
+#### [RequestMappingHandlerAdapter](https://github.com/jiny798/Study/blob/main/mvc-study/src/main/java/hello/itemservice/subject/request_response/spring/README.md)
 #### [스프링 Validation](https://github.com/jiny798/Study/blob/main/mvc-study/src/main/java/hello/itemservice/subject/validation/README.md)
 #### [Bean Validation](https://github.com/jiny798/Study/blob/main/mvc-study/src/main/java/hello/itemservice/subject/validation/beanvalidation/README.md)
 #### [Exception 처리](https://github.com/jiny798/Study/blob/main/mvc-study/src/main/java/hello/itemservice/subject/exception/README.md)
