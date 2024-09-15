@@ -41,14 +41,204 @@ rememberMe() API
 ```
 
 
-### RememberMeAuthenticationFilter
+### RememberMeAuthenticationFilter (Remember-me 인증 처리 과정)
+1. Client에서 GET /user 경로로 요청했다고 가정 
+2. RememberMeAuthenticationFilter 에서 Authentication 있는지 판단
+  - 만약 Authentication이 존재한다면 이미 인증이 된 것이니, chain.doFilter() 를 호출하여 다음 필터로 진행 
+3. 없으면 인증을 받을 수 있도록 Remember-me 쿠키를 전달해서 RemeberMeServices.authlogin() 를 실행
+4. 해당 쿠키로 사용자 정보 가져와서 RememberMeAuthenticationToken (UserDetails + Authorities) 생성 
+   - 폼인증 토큰과 다른점은 실제 존재하는 사용자 정보인 UserDetails 가 저장된다. 폼인증 할때는 username, password 를 넣음
+5. 해당 토큰으로 AuthenticationManger 를 통해 인증 처리 시작
+6. 성공 시, RememberMeAuthenticationToken(Authentication) 을 SecurityContextHolder 내부 SecurityConext에 저장
+7. 이후 SecurityContextRepository를 통해 세션에 SecurityConext 가 저장된다
+8. ApplicationEventPublisher 를 통해 인증 성공 이벤트가 발행된다 
 
-1. RememberMeAuthenticationFilter 에서 Authentication 있는지 판단
-2. 없으면 리멤버미 쿠기 전달해서 RemeberMeServices.authlogin() 실행
-3. 해당 쿠키로 사용자 정보 가져와서 RememberMeAuthenticationToken 생성
-4. 해당 토큰으로 AuthenticationManger 를 통해 인증 처리 시작
-5. 성공 시, Authentication 을 SecurityConext에 저장하고, Context를 세션에 저장
+### Remember-me 쿠키 발급 과정
+- Remeber-me 인증을 하기 위한 쿠키 발급은 UsernamePasswordAuthenticationFilter 의 부모인 AbstractAuthenticationProcessingFilter 에서 이루어진다
 
+```java
+// AbstractAuthenticationProcessingFilter 의 doFilter 메서드
+...생략
+        try {
+            Authentication authenticationResult = attemptAuthentication(request, response);
+            if (authenticationResult == null) {
+            // return immediately as subclass has indicated that it hasn't completed
+            return;
+        }
+        this.sessionStrategy.onAuthentication(authenticationResult, request, response);
+        // Authentication success
+        if (this.continueChainBeforeSuccessfulAuthentication) {
+            chain.doFilter(request, response);
+        }
+            successfulAuthentication(request, response, chain, authenticationResult);
+        }
+```
+- 폼인증을 성공하면 successfulAuthentication() 이 호출된다
+
+<br>
+
+```java
+	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
+			Authentication authResult) throws IOException, ServletException {
+		SecurityContext context = this.securityContextHolderStrategy.createEmptyContext();
+		context.setAuthentication(authResult);
+		this.securityContextHolderStrategy.setContext(context);
+		this.securityContextRepository.saveContext(context, request, response);
+		if (this.logger.isDebugEnabled()) {
+			this.logger.debug(LogMessage.format("Set SecurityContextHolder to %s", authResult));
+		}
+		// 인증 성공 시 작업 끝
+		
+		// Remember 관련 작업 
+		this.rememberMeServices.loginSuccess(request, response, authResult);
+		if (this.eventPublisher != null) {
+			this.eventPublisher.publishEvent(new InteractiveAuthenticationSuccessEvent(authResult, this.getClass()));
+		}
+		this.successHandler.onAuthenticationSuccess(request, response, authResult);
+	}
+```
+- 인증 성공 시, 작업을 끝내고 this.rememberMeServices.loginSuccess()를 통해 Remember me 관련 작업을 수행
+- 리멤버미 쿠키를 만들어 전송하는 것이다
+
+<br>
+
+```java
+	@Override
+	public void loginSuccess(HttpServletRequest request, HttpServletResponse response,
+			Authentication successfulAuthentication) {
+		if (!rememberMeRequested(request, this.parameter)) {
+			this.logger.debug("Remember-me login not requested.");
+			return;
+		}
+		onLoginSuccess(request, response, successfulAuthentication);
+	}
+```
+- "rememberme" 파라미터가 맞는지 확인하고, 맞다면 onLoginSuccess() 가 실행된다 
+
+<br>
+
+```java
+	@Override
+	public void onLoginSuccess(HttpServletRequest request, HttpServletResponse response,
+			Authentication successfulAuthentication) {
+		String username = retrieveUserName(successfulAuthentication);
+		String password = retrievePassword(successfulAuthentication);
+		// If unable to find a username and password, just abort as
+		// TokenBasedRememberMeServices is
+		// unable to construct a valid token in this case.
+		if (!StringUtils.hasLength(username)) {
+			this.logger.debug("Unable to retrieve username");
+			return;
+		}
+		if (!StringUtils.hasLength(password)) {
+			UserDetails user = getUserDetailsService().loadUserByUsername(username);
+			password = user.getPassword();
+			if (!StringUtils.hasLength(password)) {
+				this.logger.debug("Unable to obtain password for user: " + username);
+				return;
+			}
+		}
+		int tokenLifetime = calculateLoginLifetime(request, successfulAuthentication);
+		long expiryTime = System.currentTimeMillis();
+		// SEC-949
+		expiryTime += 1000L * ((tokenLifetime < 0) ? TWO_WEEKS_S : tokenLifetime);
+		String signatureValue = makeTokenSignature(expiryTime, username, password, this.encodingAlgorithm);
+		setCookie(new String[] { username, Long.toString(expiryTime), this.encodingAlgorithm.name(), signatureValue },
+				tokenLifetime, request, response);
+		if (this.logger.isDebugEnabled()) {
+			this.logger
+				.debug("Added remember-me cookie for user '" + username + "', expiry: '" + new Date(expiryTime) + "'");
+		}
+	}
+```
+- Rememberme 쿠키를 생선한다 
+
+
+<br>
+
+### RememberMe 인증 과정 
+
+```java
+// RememberMeAuthenticationFilter
+if (this.securityContextHolderStrategy.getContext().getAuthentication() != null) {
+	this.logger.debug(LogMessage.of(() -> "SecurityContextHolder not populated with remember-me token, as it already contained: '"
+						+ this.securityContextHolderStrategy.getContext().getAuthentication() + "'"));
+	chain.doFilter(request, response);
+	return;
+}
+Authentication rememberMeAuth = this.rememberMeServices.autoLogin(request, response);
+```
+- 브라우저의 JESSION 쿠키를 삭제하면 Authentication 정보가 없기 때문에 rememberMeServices.autoLogin() 가 실행된다 
+
+```java
+@Override
+	public Authentication autoLogin(HttpServletRequest request, HttpServletResponse response) {
+		String rememberMeCookie = extractRememberMeCookie(request);
+		if (rememberMeCookie == null) {
+			return null;
+		}
+		this.logger.debug("Remember-me cookie detected");
+		if (rememberMeCookie.length() == 0) {
+			this.logger.debug("Cookie was empty");
+			cancelCookie(request, response);
+			return null;
+		}
+		try {
+			String[] cookieTokens = decodeCookie(rememberMeCookie);
+			UserDetails user = processAutoLoginCookie(cookieTokens, request, response);
+			this.userDetailsChecker.check(user);
+			this.logger.debug("Remember-me cookie accepted");
+			return createSuccessfulAuthentication(request, user);
+		}
+		catch...
+		cancelCookie(request, response);
+		return null;
+	}
+
+```
+- 브라우저가 보낸 rememberme 쿠키를 추출하여 인증 객체를 만들어 낸다
+- 그리고 반환된 토큰을 가지고 인증 처리를 수행한다
+
+```java
+	private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
+        ... 생략 
+		Authentication rememberMeAuth = this.rememberMeServices.autoLogin(request, response);
+		if (rememberMeAuth != null) {
+			// Attempt authentication via AuthenticationManager
+			try {
+				// 인증 처리 수행
+				rememberMeAuth = this.authenticationManager.authenticate(rememberMeAuth);
+				// Store to SecurityContextHolder
+				SecurityContext context = this.securityContextHolderStrategy.createEmptyContext();
+				context.setAuthentication(rememberMeAuth);
+				this.securityContextHolderStrategy.setContext(context);
+				onSuccessfulAuthentication(request, response, rememberMeAuth);
+				this.logger.debug(LogMessage.of(() -> "SecurityContextHolder populated with remember-me token: '"
+						+ this.securityContextHolderStrategy.getContext().getAuthentication() + "'"));
+				this.securityContextRepository.saveContext(context, request, response);
+				if (this.eventPublisher != null) {
+					this.eventPublisher.publishEvent(new InteractiveAuthenticationSuccessEvent(
+							this.securityContextHolderStrategy.getContext().getAuthentication(), this.getClass()));
+				}
+				if (this.successHandler != null) {
+					this.successHandler.onAuthenticationSuccess(request, response, rememberMeAuth);
+					return;
+				}
+			}
+			catch...
+		}
+		chain.doFilter(request, response);
+	}
+```
+- 생성된 Rememberme 토큰을 authenticationManager 에 전달하여 인증을 수행한다 
+- 그리고 securityContextRepository 을 통해 다시 세션에 SecurityContext를 저장한다
+
+
+
+
+<br>
+<br>
 
 
 ### RequestCache - SavedRequest
