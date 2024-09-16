@@ -246,7 +246,7 @@ Authentication rememberMeAuth = this.rememberMeServices.autoLogin(request, respo
 - 인증되지 않아 로그인 페이지로 리다이렉트되고, 로그인 뒤 이전에 요청 했던 정보를 SavedRequest 객체에 담고,
 - 쿠키 or 세션에 저장하고 필요 시 다시 가져와 실행하는 캐시 형태의 구조
 
-![img.png](img.png)
+![img.png](./../img.png)
 
 - SavedRequest 는 위와 같은 정보를 담고 있다
 

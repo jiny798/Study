@@ -31,9 +31,12 @@ public class SecurityConfig {
 
 		HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
 		requestCache.setMatchingRequestParameterName("param1=y");
-		http.authorizeHttpRequests((auth) -> auth.requestMatchers("/css/**", "favicon.ico").permitAll());
+		http.authorizeHttpRequests((auth) -> auth
+			.requestMatchers("/css/**", "favicon.ico").permitAll()
+			.requestMatchers("/anonymous").hasRole("GUEST")
+			.anyRequest().authenticated());
+
 		http
-			.authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
 			.rememberMe(httpSecurityRememberMeConfigurer -> httpSecurityRememberMeConfigurer.alwaysRemember(true))
 			.formLogin(form -> form
 				.successHandler(new AuthenticationSuccessHandler() {
@@ -47,7 +50,11 @@ public class SecurityConfig {
 						response.sendRedirect(url);
 					}
 				})
-			).requestCache(configure -> configure.requestCache(requestCache));
+			).anonymous(anonymous -> anonymous
+				.principal("guest")
+				.authorities("ROLE_GUEST"))
+			.requestCache(configure -> configure
+				.requestCache(requestCache));
 
 
 
