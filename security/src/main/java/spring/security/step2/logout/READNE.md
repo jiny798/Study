@@ -30,3 +30,62 @@ http.logout(httpSecurityLogoutConfigurer -> httpSecurityLogoutConfigurer
     .addLogoutHandler((request, response, authentication) -> {}) // 기존의 로그아웃 핸들러 뒤에 새로운 LogoutHandler를 추가 한다
     .permitAll() // logoutUrl(), RequestMatcher() 의 URL 에 대한 모든 사용자의 접근을 허용 함
 ```
+
+
+### 디버깅
+
+```java
+	private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
+		if (requiresLogout(request, response)) {
+			Authentication auth = this.securityContextHolderStrategy.getContext().getAuthentication();
+			if (this.logger.isDebugEnabled()) {
+				this.logger.debug(LogMessage.format("Logging out [%s]", auth));
+			}
+			this.handler.logout(request, response, auth);
+			this.logoutSuccessHandler.onLogoutSuccess(request, response, auth);
+			return;
+		}
+		chain.doFilter(request, response);
+	}
+```
+
+<br>
+
+- requiresLogout(request, response) : 로그아웃 요청 URL 이 맞는지 체크한다 
+- handler.logout() : 핸들러를 통해 로그아웃 진행 (핸들러 종류는 여러가지가 포함됨)
+- SecurityContextLogoutHandler 에서 세션 무효화
+- 쿠키, csrf LogoutHandler 에서도 로그아웃 관련 작업 진행 
+- 그리고 사용자가 직접 등록한 로그아웃 핸들러도 실행된다 
+
+
+<br>
+
+SecurityContextLogoutHandler
+
+```java
+	@Override
+	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+		Assert.notNull(request, "HttpServletRequest required");
+		if (this.invalidateHttpSession) {
+			HttpSession session = request.getSession(false);
+			if (session != null) {
+				session.invalidate();
+				if (this.logger.isDebugEnabled()) {
+					this.logger.debug(LogMessage.format("Invalidated session %s", session.getId()));
+				}
+			}
+		}
+		SecurityContext context = this.securityContextHolderStrategy.getContext();
+		this.securityContextHolderStrategy.clearContext();
+		if (this.clearAuthentication) {
+			context.setAuthentication(null);
+		}
+		SecurityContext emptyContext = this.securityContextHolderStrategy.createEmptyContext();
+		this.securityContextRepository.saveContext(emptyContext, request, response);
+	}
+```
+- 세션 제거
+- SecurityContext 초기화
+- 비어있는 Context 를 다시 SecurityContextHolder 에 저장하여, 다시 인증받도록 유도 
+
