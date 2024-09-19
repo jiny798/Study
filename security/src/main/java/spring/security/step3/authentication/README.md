@@ -28,9 +28,9 @@
 - Principal (자바 API) 을 상속 받고 있다. 
 - Principal 은 인증 주체 , 인증 요청 전에는 사용자 아이디, 인증 후에는 UserDetails 를 저장하는 용도로 사용 
 
-![img_1.png](img_1.png)
+![img_1.png](./../img_1.png)
 
-![img.png](img.png)
+![img.png](./../img.png)
 
 getPrincipal() : 인증 주체를 의미하며 인증 요청의 경우 사용자 이름, 인증 후 UserDetails 타입 객체로 사용
 
