@@ -24,13 +24,48 @@ MODE_GLOBAL : 전역적으로 단일 보안 컨텍스트를 사용하며, 잘 �
 
 ![img.png](img.png)
 
-MODE_THREADLOCAL 인 경우 ThreadLocalSecurityContextHolderStrategy 구현체가 생성되고,
+- SecurityContextHolderStrategy 는 인터페이스로 전략에 따라 구현체는 다음과 같다
 
-MODE_INHERITABLETHREADLOCAL 인 경우, InheritableThreadLocalSecurityContextHolderStrategy 가 생성되고,
+- MODE_THREADLOCAL 인 경우 ThreadLocalSecurityContextHolderStrategy 구현체가 생성되고,
 
-MODE_GLOBAL 인 경우, GlobalSecurityContextHolderStrategy 구현체가 사용된다
+- MODE_INHERITABLETHREADLOCAL 인 경우, InheritableThreadLocalSecurityContextHolderStrategy 가 생성되고,
+
+- MODE_GLOBAL 인 경우, GlobalSecurityContextHolderStrategy 구현체가 사용된다
+
+SecurityContextHolder
+```java
+// SecurityContextHolder
+private static void initializeStrategy() {
+    if (MODE_PRE_INITIALIZED.equals(strategyName)) {
+        Assert.state(strategy != null, "When using " + MODE_PRE_INITIALIZED
+                + ", setContextHolderStrategy must be called with the fully constructed strategy");
+        return;
+    }
+    if (!StringUtils.hasText(strategyName)) {
+        // Set default
+        strategyName = MODE_THREADLOCAL;
+    }
+    if (strategyName.equals(MODE_THREADLOCAL)) {
+        strategy = new ThreadLocalSecurityContextHolderStrategy();
+        return;
+    }
+    if (strategyName.equals(MODE_INHERITABLETHREADLOCAL)) {
+        strategy = new InheritableThreadLocalSecurityContextHolderStrategy();
+        return;
+    }
+    if (strategyName.equals(MODE_GLOBAL)) {
+        strategy = new GlobalSecurityContextHolderStrategy();
+        return;
+    }
+ // ...
+}
+
+```
+- 초기화 시, 전략에 따라 구현체가 달라지는 것을 볼 수 있다
+
 
 **그리고 SecurityContextHolder 가 SecurityContextHolderStrategy 를 포함한다**
+
 그래서 SecurityContext 를 참조하기 위해 Security6 에서는 다음과 같이 사용한다
 
 ### SecurityContext 참조 및 삭제
@@ -42,9 +77,44 @@ MODE_GLOBAL 인 경우, GlobalSecurityContextHolderStrategy 구현체가 사용�
   - SecurityContexHolder.getContextHolderStrategy().clearContext()
 
 
-### üSecurityContextHolder - SecurityContext 
+### SecurityContextHolder - SecurityContext 
 
 - 스레드마다 할당되는 저장소에 SecurityContext 가 저장되기 때문에 동시성 문제가 발생하지 않는다
 - 스레드 풀을 사용하는 경우, ThreadLocal 재사용 될 수 있기 때문에 클라이언트로 응답 직전에 항상 SecurityContext 를 삭제하여 내부 값을 비우고 있다
+
+
+<br>
+<br>
+
+------------
+
+### 인증 성공 시, SecurityContextHolder 자세히 보기
+AbstractAuthenticationProcessingFilter
+```java
+// AbstractAuthenticationProcessingFilter
+	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
+			Authentication authResult) throws IOException, ServletException {\
+        // SecurityContext 생성 
+		SecurityContext context = this.securityContextHolderStrategy.createEmptyContext();
+    
+        // SecurityContext 에 인증 객체 저장
+		context.setAuthentication(authResult);
+        
+        // securityContextHolderStrategy 에 SecurityContext(인증객체포함)를 저장
+		this.securityContextHolderStrategy.setContext(context);
+        
+        // 세션에 SecurityContext(인증객체포함)를 저장
+		this.securityContextRepository.saveContext(context, request, response);
+		if (this.logger.isDebugEnabled()) {
+			this.logger.debug(LogMessage.format("Set SecurityContextHolder to %s", authResult));
+		}
+		this.rememberMeServices.loginSuccess(request, response, authResult);
+		if (this.eventPublisher != null) {
+			this.eventPublisher.publishEvent(new InteractiveAuthenticationSuccessEvent(authResult, this.getClass()));
+		}
+		this.successHandler.onAuthenticationSuccess(request, response, authResult);
+	}
+```
+
 
 
