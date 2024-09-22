@@ -17,10 +17,10 @@ public class Step2Controller {
 		return "index";
 	}
 
-	@GetMapping("/anonymous")
-	public String anonymous() {
-		return "anonymous";
-	}
+	// @GetMapping("/anonymous")
+	// public String anonymous() {
+	// 	return "anonymous";
+	// }
 
 	@GetMapping("/anonymous")
 	public String authentication(Authentication authentication) {
