@@ -1,17 +1,16 @@
 ## Spring Study
 
-
-#### [MVC 프레임워크 만들기](https://github.com/jiny798/Study/blob/main/mvc-framework/README.md)
-#### [데이터 전송 GET(Query-parameter) , POST(FORM), JSON](https://github.com/jiny798/Study/blob/main/mvc-study/src/main/java/hello/itemservice/subject/request_response/basic/README.md) 
-#### [RequestMappingHandlerAdapter](https://github.com/jiny798/Study/blob/main/mvc-study/src/main/java/hello/itemservice/subject/request_response/spring/README.md)
-#### [스프링 Validation](https://github.com/jiny798/Study/blob/main/mvc-study/src/main/java/hello/itemservice/subject/validation/README.md)
-#### [Bean Validation](https://github.com/jiny798/Study/blob/main/mvc-study/src/main/java/hello/itemservice/subject/validation/beanvalidation/README.md)
-#### [Exception 처리](https://github.com/jiny798/Study/blob/main/mvc-study/src/main/java/hello/itemservice/subject/exception/README.md)
-#### JDBC
+#### spring
+- [MVC 프레임워크 만들기](https://github.com/jiny798/Study/blob/main/mvc-framework/README.md)
+- [데이터 전송 GET(Query-parameter) , POST(FORM), JSON](https://github.com/jiny798/Study/blob/main/mvc-study/src/main/java/hello/itemservice/subject/request_response/basic/README.md) 
+- [RequestMappingHandlerAdapter](https://github.com/jiny798/Study/blob/main/mvc-study/src/main/java/hello/itemservice/subject/request_response/spring/README.md)
+- [스프링 Validation](https://github.com/jiny798/Study/blob/main/mvc-study/src/main/java/hello/itemservice/subject/validation/README.md)
+- [Bean Validation](https://github.com/jiny798/Study/blob/main/mvc-study/src/main/java/hello/itemservice/subject/validation/beanvalidation/README.md)
+- [Exception 처리](https://github.com/jiny798/Study/blob/main/mvc-study/src/main/java/hello/itemservice/subject/exception/README.md)
 
 <br>
 
-## Spring Security 1 
+## Spring Security 6
 > 인프런 교육 정리 : [스프링 시큐리티 완전 정복](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-%EC%8B%9C%ED%81%90%EB%A6%AC%ED%8B%B0-%EC%99%84%EC%A0%84%EC%A0%95%EB%B3%B5/dashboard)
 
 #### step1
