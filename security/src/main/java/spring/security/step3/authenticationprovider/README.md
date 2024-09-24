@@ -43,18 +43,68 @@ public AuthenticationProvider customAuthenticationProvider(){
     return new CustomAuthenticationProvider();
 }
 ```
+- 빈 하나만 추가하면 아래 그림과 같이 부모 AuthenticationManager 에 DaoAuthenticationProvider 가 대체된다
 
+![img_2.png](img_2.png)
+
+
+<br>
+
+
+DaoAuthenticationProvider 를 유지한 채로 커스텀 Provider 를 추가하는 방법
 ```java
 @Bean
  public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManagerBuilder builder, AuthenticationConfiguration configuration) 
 throws Exception {
  AuthenticationManagerBuilder managerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
- managerBuilder.authenticationProvider(customAuthenticationProvider());
+ 
+ // 1. customAuthenticationProvider 를 ProviderManager 에 추가한다 
+ managerBuilder.authenticationProvider(customAuthenticationProvider()); 
+ 
  ProviderManager providerManager = (ProviderManager)configuration.getAuthenticationManager();
+ 
+ // 빈으로 등록하여 parent 에 추가된 CustomAuthenticationProvider 를 제거한다 
  providerManager.getProviders().remove(0);
+ 
+ // parent 에 DaoAuthenticationProvider 를 추가한다
  builder.authenticationProvider(new DaoAuthenticationProvider());
  http.authorizeHttpRequests(auth -> auth.anyRequest().authenticated());
  return http.build();
  }
 
 ```
+
+- 아래와 같이 DaoAuthenticationProvider 을 유지한 채로 커스텀 Provider 를 추가할 수 있다 
+
+![img_3.png](img_3.png)
+
+
+#### 3. 빈으로 2개 이상 추가 
+
+```java
+@Bean
+ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    AuthenticationManagerBuilder managerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+    
+    // 빈으로 등록된 Provider 추가 
+    managerBuilder.authenticationProvider(customAuthenticationProvider());
+    managerBuilder.authenticationProvider(customAuthenticationProvider2());
+     
+    http.authorizeHttpRequests(auth -> auth.anyRequest().authenticated());
+    http.formLogin(Customizer.withDefaults());
+    return http.build();
+ }
+ 
+ @Bean
+ public AuthenticationProvider customAuthenticationProvider(){
+    return new CustomAuthenticationProvider();
+ }
+ @Bean
+ public AuthenticationProvider customAuthenticationProvider2(){
+    return new CustomAuthenticationProvider2();
+ }
+```
+
+- 빈으로 2개 이상 등록하면 자동으로 ProviderManager 의 providers 에 추가된다 
+
+![img_4.png](img_4.png)
