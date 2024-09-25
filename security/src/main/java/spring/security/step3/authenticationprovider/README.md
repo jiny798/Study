@@ -108,3 +108,105 @@ throws Exception {
 - 빈으로 2개 이상 등록하면 자동으로 ProviderManager 의 providers 에 추가된다 
 
 ![img_4.png](img_4.png)
+
+
+--------------------------------
+
+
+<br>
+<br>
+
+
+
+### DaoAuthenticationProvider 추가되는 과정  
+
+
+InitializeAuthenticationProviderBeanManagerConfigurer 내부  InitializeAuthenticationProviderManagerConfigurer 클래스
+
+```java
+class InitializeAuthenticationProviderManagerConfigurer extends GlobalAuthenticationConfigurerAdapter {
+
+		@Override
+		public void configure(AuthenticationManagerBuilder auth) {
+			if (auth.isConfigured()) {
+				return;
+			}
+			AuthenticationProvider authenticationProvider = getBeanOrNull(AuthenticationProvider.class);
+			if (authenticationProvider == null) {
+				return;
+			}
+			auth.authenticationProvider(authenticationProvider);
+		}
+
+		/**
+		 * @return a bean of the requested class if there's just a single registered
+		 * component, null otherwise.
+		 */
+		private <T> T getBeanOrNull(Class<T> type) {
+			String[] beanNames = InitializeAuthenticationProviderBeanManagerConfigurer.this.context
+				.getBeanNamesForType(type);
+			if (beanNames.length != 1) {
+				return null;
+			}
+			return InitializeAuthenticationProviderBeanManagerConfigurer.this.context.getBean(beanNames[0], type);
+		}
+
+	}
+
+}
+```
+
+- 초기화 작업 중 configure() 에서 AuthenticationProvider 를 체크하고 있다.
+- 여기에서는 authenticationProvider 이 null 이다 
+
+
+InitializeUserDetailsBeanManagerConfigurer 내부  InitializeUserDetailsManagerConfigurer 에서 2번째 작업 
+
+```java
+class InitializeUserDetailsManagerConfigurer extends GlobalAuthenticationConfigurerAdapter {
+
+		@Override
+		public void configure(AuthenticationManagerBuilder auth) throws Exception {
+			if (auth.isConfigured()) {
+				return;
+			}
+			UserDetailsService userDetailsService = getBeanOrNull(UserDetailsService.class);
+			if (userDetailsService == null) {
+				return;
+			}
+			PasswordEncoder passwordEncoder = getBeanOrNull(PasswordEncoder.class);
+			UserDetailsPasswordService passwordManager = getBeanOrNull(UserDetailsPasswordService.class);
+			DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+			provider.setUserDetailsService(userDetailsService);
+			if (passwordEncoder != null) {
+				provider.setPasswordEncoder(passwordEncoder);
+			}
+			if (passwordManager != null) {
+				provider.setUserDetailsPasswordService(passwordManager);
+			}
+			provider.afterPropertiesSet();
+			auth.authenticationProvider(provider);
+		}
+
+		/**
+		 * @return a bean of the requested class if there's just a single registered
+		 * component, null otherwise.
+		 */
+		private <T> T getBeanOrNull(Class<T> type) {
+			String[] beanNames = InitializeUserDetailsBeanManagerConfigurer.this.context.getBeanNamesForType(type);
+			if (beanNames.length != 1) {
+				return null;
+			}
+			return InitializeUserDetailsBeanManagerConfigurer.this.context.getBean(beanNames[0], type);
+		}
+
+	}
+```
+- UserDetailsService 가 있는지 체크 , 여기에서는 등록한 UserDetailsService 빈이 있으니 가져온다 
+- DaoAuthenticationProvider 를 만들 때 UserDetailsService 를 전달한다 
+- 그래서 우리가 등록한 UserDetailsService 가 사용되는 것이다 
+- authenticationProvider() 를 통해 Provider List 에 추가한다 
+  - 만약 Provider 빈을 하나 등록했으면 DaoAuthenticationProvider 를 대체하게 된다 
+
+
+
