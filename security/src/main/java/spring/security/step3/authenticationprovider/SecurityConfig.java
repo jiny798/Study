@@ -12,8 +12,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
-@EnableWebSecurity
-@Configuration
+/*
+* CustomAuthenticationProvider 2개 추가
+* authenticationManager - providers 에 CustomAuthenticationProvider 2개가 추가된다
+ */
+
+//@EnableWebSecurity
+//@Configuration
 public class SecurityConfig {
 
     @Bean
