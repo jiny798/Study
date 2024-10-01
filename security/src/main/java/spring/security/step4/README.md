@@ -1,5 +1,55 @@
+### SecurityContextRepository
 
-### 1. securityContextRepository 설정 과정 
+- SecurityContext 를 세션 또는 Request 에 저장하고, 불러올 수 있게 해주는 객체 
+-  사용자가 인증을 한 이후 요청에 대해 계속 사용자의 인증을 유지하기 위해 사용되는 클래스
+
+[인증 요청인 경우]
+
+1. Cleint - login 요청
+2. 인증이 완료되면 AuthenticationFilter 에서 SecurityContext 안에 Authentication(인증정보)를 저장 
+3. 그리고 SecurityContextRepository 를 사용해서 세션에 SecurityContext 를 저장한다
+
+[인증 후 요청]
+
+1. 인증이 필요한 url 로 요청
+2. SecurityContextHolderFilter 에서 SecurityContextRepository 를 사용해서 세션으로부터 SecurityContext 가져온다
+
+<br>
+
+------------------------------------
+
+### SecurityContextRepository 구조 
+
+![img.png](img.png)
+
+- containsContext() : 보안 컨텍스트가 저장소에 있는지 확인하는 용도
+- saveContext() : 인증 요청 완료 시, 보안 컨텍스트를 저장소에 저장하는 용도
+- loadDeferredContext() : Supply 객체를 반환 시켜, 실제 Context 를 필요한 시점에 사용하도록 한다
+
+구현체는 HttpSessionSecurityContextRepository, RequestAttributeSecurityContextRepository 가 있으며,
+
+시큐리티에서는 이 2개를 동시에 사용할 수 있도록 해당 2개 클래스를 모두 포함한 DelegatingSecurityContextRepository 를 사용한다 
+
+---------------------
+
+### SecurityContextHolderFilter
+
+- 해당 필터는 주로 앞단에서  SecurityContextRepository 를 사용하여 SecurityContext를 얻고 이를 SecurityContextHolder 에 설정하는 필터 클래스이다
+
+- 그리고 해당 필터는  SecurityContextRepository.saveContext()를 호출하지 않아 따로 저장소에 저장하지 않고, SecurityContext 를 불러오거나, 다음 필터로 전달해주는 역할만 한다
+
+- Security5 에서는 앞단에서 SecurityContextPersistenceFilter 가 SecurityContextRepository.saveContext() 를 호출하여 세션에 SecurityContext 를 저장하였다
+
+
+>Security6 에서는 SecurityContext 저장 같은 경우, 해당 과정이 필요한 필터에서 직접하도록 수정되었다고 볼 수 있다.
+> 
+> ex: 폼인증을 처리하는 필터에서 인증이 완료되면 SecurityContextRepository.saveContext() 를 호출하여 직접 저장한다
+
+
+
+--------------------------
+
+### securityContextRepository 설정 과정 
 
 - SecurityContext 를 "Session 객체" 또는 "request 객체"에 저장하거나,
 - 해당 객체로 부터 SecurityContext 불러오기 위한 securityContextRepository 가 설정되는 과정을 설명한다 
@@ -64,7 +114,7 @@ if( securityContextConfigurer !=null && securityContextConfigurer.isRequireExpli
 <br>
 <br>
 
-### 2. 익명 사용자 요청 시, AnonymousAuthenticationToken 생성 과정 
+### 익명 사용자 요청 시, AnonymousAuthenticationToken 생성 과정 
 
 - 익명 요청인 경우, AnonymousAuthenticationToken 을 만들어 SecurityContext 에 저장되는 과정을 설명한다 
 
@@ -108,8 +158,43 @@ public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
 }
 ```
 - AnonymousAuthenticationFilter 에서도 설정만 하고 넘어간다 (당장 여기서 필요하지 않기 때문에)
+- 그리고 defaultWithAnonymous() 를 호출하여 SecurityContext 를 생성하고 있다
 
 <br>
+
+```java
+    private SecurityContext defaultWithAnonymous(HttpServletRequest request, SecurityContext currentContext) {
+        Authentication currentAuthentication = currentContext.getAuthentication();
+        if (currentAuthentication == null) {
+            Authentication anonymous = this.createAuthentication(request);
+            if (this.logger.isTraceEnabled()) {
+                this.logger.trace(LogMessage.of(() -> {
+                    return "Set SecurityContextHolder to " + anonymous;
+                }));
+            } else {
+                this.logger.debug("Set SecurityContextHolder to anonymous SecurityContext");
+            }
+
+            SecurityContext anonymousContext = this.securityContextHolderStrategy.createEmptyContext();
+            anonymousContext.setAuthentication(anonymous);
+            return anonymousContext;
+        } else {
+            if (this.logger.isTraceEnabled()) {
+                this.logger.trace(LogMessage.of(() -> {
+                    return "Did not set SecurityContextHolder since already authenticated " + currentAuthentication;
+                }));
+            }
+
+            return currentContext;
+        }
+    }
+```
+
+- getAuthentication() 를 통해 사용자를 가져오지만 (세션, request 객체 모두 탐색한다) 
+- 여기에서는 익명 사용자 이기 때문에 null을 반환한다
+- 익명 사용자 Authentication 를 만들어서 anonymousContext 에 저장한다 
+
+
 <br>
 
 AuthorizationFilter
@@ -123,7 +208,12 @@ AuthorizationFilter
         }
     }
 ```
-- 인가 처리시점에 Authentication 을 가져오기 위해 실제 SecurityContext 를 가져온다 
-- 세션, request 객체에서 Authentication 을 찾는다
-- 여기에서는 익명 사용자 이기 때문에 null을 반환한다  
-- Authentication 이 null이면 AnonymousAuthenticationFilter 에서 AnonymousAuthenticationToken 을 만들어 Context 에 저장한다 
+- 인가 처리 시점에 다시 getAuthentication() 을 하여 인증 객체를 가져온다
+- 여기에서 익명 사용자 인증 객체가 반환된다 
+
+
+
+
+> 결론적으로 익명사용자는 새로운 인증 객체를 만들어서 SecurityContext 에 저장한다
+> 
+> 인증된 사용자는 세션으로부터 가져와서 인증 객체를 SecurityContext 에 저장한다
