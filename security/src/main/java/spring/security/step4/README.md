@@ -43,7 +43,9 @@
 
 >Security6 에서는 SecurityContext 저장 같은 경우, 해당 과정이 필요한 필터에서 직접하도록 수정되었다고 볼 수 있다.
 > 
-> ex: 폼인증을 처리하는 필터에서 인증이 완료되면 SecurityContextRepository.saveContext() 를 호출하여 직접 저장한다
+> ex: 폼인증을 처리하는 필터에서 인증이 완료되면 SecurityContextRepository.saveContext() 를 호출하여 세션에 저장한다
+> 
+> Custom 인증 Filter 를 만드는 경우, DelegatingSecurityContextRepository 와 같은 객체를 전달하여 사용할 수 있도록 시큐리티에서 API도 제공함
 
 
 

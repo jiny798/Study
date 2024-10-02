@@ -5,16 +5,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController("/step2")
+@RestController
+@RequestMapping("/step2")
 public class Step2Controller {
 
-	@GetMapping("/")
+	@GetMapping
 	@ResponseBody
 	public String index() {
-		return "index";
+		return "step2 index";
 	}
 
 	// @GetMapping("/anonymous")
