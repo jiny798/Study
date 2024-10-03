@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class LoginController {
 
-    private final AuthenticationManager authenticationManager;
-    private final HttpSessionSecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
+//    private final AuthenticationManager authenticationManager;
+//    private final HttpSessionSecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
 
 //    @PostMapping("/login")
 //    public Authentication customLogin(@RequestBody LoginRequest login, HttpServletRequest request, HttpServletResponse response) {
