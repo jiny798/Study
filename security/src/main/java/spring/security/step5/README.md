@@ -8,7 +8,7 @@
 
 
 
-### 동시 세션 제어
+### 1.동시 세션 제어
 
 - 시큐리티에서 사용자가 같은 계정으로 몇개의 세션을 생성할 것인지 관리하는 전략
 - maximumSessions 값을 통해 제어한다
@@ -50,7 +50,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
 ---------------------------
 
 
-### 세션 고정 보호
+### 2. 세션 고정 보호
 
 공격자가 먼저 세션 쿠키 ID를 발급 받아, 사용자에게 전달하고
 
@@ -73,7 +73,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
 ------------------------
 
 
-### 세션 생성 정책
+### 3. 세션 생성 정책
 
 스프링 시큐리티에서 인증된 사용자에 대한 세션을 어떻게 생성하고 관리할지 결정할 수 있도록 API를 제공한다
 
@@ -116,10 +116,46 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
 > 
 > CSRF 기능과 같이 세션을 사용해야 하는 경우에는 사용한다 
 
+------------------
 
-RegisterSessionAuthenticationStrategy 
-- 인증에 성공했을 때, 세션 정보를 저장하거나 읽어오는 것 등등 을 담당 
-- 동시 세션 제어 등을 할 때 같이 사용되어 진다 
+<br>
+
+### 4. SessionManagementFilter
+
+SessionManagementFilter 는 다음과 같은 역할을 한다
+
+- 사용자 인증을 감지하고, 세션 고정 보호 메커니즘을 활성화한다
+- 동시 다중 로그인을 확인하고 세션 정책에 맞게 동시 세션을 제어한다
+- 세션을 생성하는 등 세션 정보를 관리한다
+- 스프링 시큐리티 6 이상에서는 SessionManagementFilter 가 기본적으로 설정 되지 않으며 세션관리 API 를 설정을 통해 생성할 수 있다
+
+
+[세션 구성 요소]
+
+![img.png](img.png)
+
+- SessionManagementFilter 는 SessionAuthenticationStrategy 를 호출하여 세션 관련 활동을 수행한다 
+- 세션 정책은 SessionCreationPolicy(Enum 타입)으로 제공한다 
+  - **ALWAYS,  NEVER,  IF_REQUIRED,  STATELESS**
+
+RegisterSessionAuthenticationStrategy
+- 인증에 성공했을 때, 세션 정보를 저장하거나 읽어오는 것 등등 을 담당
+- 동시 세션 제어 등을 할 때 같이 사용되어 진다
+
+------------------------
+
+<br>
+
+### 5. ConcurrentSessionFilter
+
+- 각 요청에 대해 SessionRegistry에서 SessionInformation 을 검색하고 세션이 만료로 표시되었는지 확인하고, 만료되었다면 로그아웃 처리를 수행한다 (해당 세션 제거)
+- 만료되지 않았다면,  SessionRegistry.refreshLastRequest(String)를 호출하여 등록된 세션들이 항상 '마지막 업데이트' 날짜/시간을 가지도록 한다
+
+![img_1.png](img_1.png)
+
+
+
+
 
 
 
