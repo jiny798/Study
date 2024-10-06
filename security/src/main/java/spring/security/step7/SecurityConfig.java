@@ -12,8 +12,9 @@ import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler
 // @EnableWebSecurity
 // @Configuration
 public class SecurityConfig {
-	// http.csrf(Customizer.withDefaults());
-	// http.csrf(csrf -> csrf.ignoringRequestMatchers("/test/*"));
+
+	
+
 	@Bean
 	SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
 
@@ -22,11 +23,14 @@ public class SecurityConfig {
 
 		http
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/csrf").permitAll()
+				.requestMatchers("/csrf", "/csrfToken").permitAll()
 				.anyRequest().authenticated())
 			.formLogin(Customizer.withDefaults())
 			.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 				.csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)); // csrfTokenRepository
+
+
+		// http.csrf(csrf -> csrf.ignoringRequestMatchers("/test/*")); // 해당 URL 은 csrf 기능 적용하지 않는다
 
 		return http.build();
 	}

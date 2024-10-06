@@ -1,6 +1,9 @@
 
 ### 1. CORS (Cross Origin Resource Sharing 교차 출처 리소스 공유)
 
+![img.png](img.png)
+
+
 - 웹은 한 페이지에서 다른 웹 페이지의 데이터를 직접 불러오는 것을 제한하며, 이것은 "동일 출처 정책(Same-Origin Policy)"
 라고 한다
 - 다른 출처의 리소스를 사용하고자 할 때, CORS 를 사용해야 하며, HTTP 헤더를 통해 다른 출처의 리소스에 접근할 수 있도록 하는 정책이다.
@@ -13,6 +16,9 @@
 <br>
 
 ### 2. CORS 종류
+
+출처가 다른 리소스를 허가할 것인지 검사하는 방식은 2가지가 있다
+
 2-1. Simple Request 
 - 해당 요청은 서버에 본요청을 바로 보내서, 응답의 헤더를 보고 브라우저에서
 교차 출처 리소스를 사용해도 되는지 판단하는 방식 
@@ -41,6 +47,7 @@
 4. 서버에서 받은 CORS 관련 헤더 값과 기존 요청의 헤더(ORIGIN)을 보고, 출처가 다르지만 리소스 공유가 가능하다고 판단
 5. 브라우저 -----> Server : 실제 요청 전송
 
+--------------------------
 
 <br>
 <br>
@@ -48,6 +55,7 @@
 
 ### 3. CSRF 
 - CSRF는 쿠키같은 경우 요청 시 자동으로 전달되기 때문에, 사용자가 의도하지 않은 요청을 서버로 전송하게 하는 공격이다
+- 쿠키는 요청 시 브라우저가 자동으로 쿠키를 전송하는 것을 이용한 공격 
 
 [흐름도]
 1. 사용자 ----> 웹사이트 : 사용자가 웹사이트(a.com)에 로그인 완료
@@ -55,6 +63,10 @@
 3. attack.com 에는 a.com/upload 와 같은 이미지 태그가 있다
 4. 사용자가 해당 태그를 누르면 attack.com 에서 a.com/upload 와 같은 링크 실행
 5. 쿠기가 자동으로 전달되어, 로그인되었다고 판단해 원치않는 a.com/upload 가 실행됨
+
+----------------------------
+
+### CSRF 활성화
 
 ```java
 @Bean
@@ -73,7 +85,70 @@ SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
 
 <br>
 
-#### 3-1. CSRF 디버깅 포인트
+
+---
+
+### CSRF 토큰 저장 읽기 - CsrfTokenRepository
+
+CsrfToken은 CsrfTokenRepository 를 사용하여 관리하며, HttpSessionCsrfTokenRepository 와 CookieCsrfTokenRepository 를 지원한다
+
+```java
+@Bean
+SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+    HttpSessionCsrfTokenRepository repository = new HttpSessionCsrfTokenRepository();
+    http.csrf(csrf -> csrf.csrfTokenRepository(repository));
+    return http.build();
+}
+
+```
+
+- HttpSessionCsrfTokenRepository : 세션에 토큰을 저장한다 
+- HttpSessionCsrfTokenRepository는 기본적으로 HTTP 요청 헤더인 **X-CSRF-TOKEN** 또는 요청 매개변수인 _csrf에서 토큰을 읽는다
+
+```java
+@Bean
+SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+    CookieCsrfTokenRepository repository = new CookieCsrfTokenRepository();
+    // 아래 둘 중 하나만 가능 
+    http.csrf(csrf -> csrf.csrfTokenRepository(repository));
+    http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
+    return http.build();
+}
+```
+
+- JavaScript 기반 애플리케이션을 지원하기 위해 CsrfToken 을 쿠키에 유지할 수 있으며 구현체로 CookieCsrfTokenRepository를 사용할 수 있다
+- CookieCsrfTokenRepository 는 기본적으로 **XSRF-TOKEN** 명을 가진 쿠키에 작성하고 HTTP 요청 헤더인 X-XSRF-TOKEN 또는 요청 매개변수인 _csrf에서 읽는다
+- 기본적으로 Csrf 토큰 쿠키는 HTTPOnly 이기 때문에 JavaScript 에서 쿠키를 읽을 수 있도록 HttpOnly를 명시적으로 false로 설정할 수 있다
+- 직접 쿠키를 읽을 필요가 없는 경우 보안을 개선하기 위해 기본 설정을 사용하는 것이 좋다 
+
+
+----
+
+### CsrfTokenRequestHandler
+
+해당 클래스의 역할은 다음과 같다
+
+- Csrf 토큰을 생성하고 응답한다.
+- HTTP 헤더 또는 요청 매개변수로부터 토큰의 유효성을 검증하도록 한다
+- 구현체로 XorCsrfTokenRequestAttributeHandler 와 CsrfTokenRequestAttributeHandler 를 제공하며, 사용자가 직접 구현할 수도 있다
+  - XorCsrfTokenRequestAttributeHandler 는 토큰을 암호화를 하며, CsrfTokenRequestAttributeHandler 를 상속받고 있다
+
+```java
+@Bean
+SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+    XorCsrfTokenRequestAttributeHandler csrfTokenHandler = new XorCsrfTokenRequestAttributeHandler();
+    http.csrf(csrf -> csrf.csrfTokenRequestHandler(csrfTokenHandler));
+    return http.build();
+}
+```
+
+- “_csrf ” 및 CsrfToken.class.getName() 명으로 HttpServletRequest 속성에 CsrfToken 을 저장하기 때문에 HttpServletRequest 에서 꺼내 사용할 수 있다
+- 클라이언트의 매 요청마다 CSRF 토큰 값(UUID) 에 난수를 인코딩하여 변경한 CsrfToken 이 반환 되도록 보장 (세션의 원본 토큰 값은 유지)
+
+
+-----
+
+#### CSRF 디버깅
 
 [CsrfFilter.class]
 ```java
