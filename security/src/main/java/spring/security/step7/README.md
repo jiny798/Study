@@ -193,14 +193,63 @@ protected void doFilterInternal(HttpServletRequest request, HttpServletResponse 
 - actualToken 은 클라이언트로 보낸 토큰을 읽어 온 것
 - 그리고 유효성 체크 시작. 다르면 권한 에러를 발생시킨다
 
-[흐름도]
+<details>
+<summary>DeferredCsrfToken 구현체 보기 </summary>
 
+- DeferredCsrfToken 의 구현체는 RepositoryDeferredCsrfToken 이다
+- 실제 토큰을 가지고 있으며, get() 하는 시점에 실제 토큰을 가져온다 
+- csrfTokenRepository 는 기본적으로 세션을 사용한다 
+
+```java
+final class RepositoryDeferredCsrfToken implements DeferredCsrfToken {
+    private final CsrfTokenRepository csrfTokenRepository;
+    private final HttpServletRequest request;
+    private final HttpServletResponse response;
+    private CsrfToken csrfToken;
+    private boolean missingToken;
+
+    RepositoryDeferredCsrfToken(CsrfTokenRepository csrfTokenRepository, HttpServletRequest request, HttpServletResponse response) {
+        this.csrfTokenRepository = csrfTokenRepository;
+        this.request = request;
+        this.response = response;
+    }
+
+    public CsrfToken get() {
+        // get() 을 호출하면 실제 토큰을 가져온다 
+        this.init();
+        return this.csrfToken;
+    }
+
+    public boolean isGenerated() {
+        this.init();
+        return this.missingToken;
+    }
+
+    private void init() {
+        if (this.csrfToken == null) {
+            this.csrfToken = this.csrfTokenRepository.loadToken(this.request);
+            this.missingToken = this.csrfToken == null;
+            if (this.missingToken) {
+                this.csrfToken = this.csrfTokenRepository.generateToken(this.request);
+                this.csrfTokenRepository.saveToken(this.csrfToken, this.request, this.response);
+            }
+
+        }
+    }
+}
+```
+
+</details>
+
+[흐름도]
+ 
 >주요 로직은 코드에 주석한 것처럼 크게 1,2,3 단계로 나눌 수 있다
 
 <strong>1단계</strong>
 
 1단계는 모든 요청마다 실행하는 공통 단계이다
 DeferredCsrfToken 안에 실제 CsrfToken 변수를 가지고 있으며, get 하기 전까지는 실제 토큰을 가져오지 않는다. 실제로 필요한 시점에 호출하도록 하여 미루는 것이다.
+
 
 this.requestHandler.handle 에서 Supplier로 한번 더 감싸고,
 ```java
@@ -223,7 +272,7 @@ public void handle(HttpServletRequest request, HttpServletResponse response,
 
 csrfRequestAttributeName 이 null 이라면, 실제 토큰을 호출하여 파라미터 이름을 가져오는데, 이때 실제 토큰을 불러오게 되면서, Deferred 효과는 사라진다
 
-
+---
 
 <strong>2단계</strong>
 
@@ -232,6 +281,8 @@ Matcher 객체를 보면 다음과 같은 코드가 있다.
 private final HashSet<String> allowedMethods = new HashSet<>(Arrays.asList("GET", "HEAD", "TRACE", "OPTIONS"));
 ```
 "GET", "HEAD", "TRACE", "OPTIONS" 요청은 CSRF 처리를 하지 않고, 다음 필터로 진행한다 
+
+-----
 
 <strong>3단계</strong>
 
@@ -243,14 +294,16 @@ POST,DELETE 등 요청인 경우 실행된다고 볼 수 있다.
 만약 인증을 받지 않아 첫 요청이면 세션에 없다. 
 그럼 새로운 토큰을 만들어 발급하고, 세션에 새로 저장한다 
 
-이후, 클라에서 온 토큰과 실제 토큰을 비교하는 로직을 수행 
+이후 다시 요청이 오면, 클라에서 온 토큰과 실제 토큰을 비교하는 로직을 수행 
 
 -> 클라 토큰은 _csrf 파라미터 네임 또는 X-CSRF-TOKEN 헤더 네임으로 읽어 본다 . (변경 가능)
 
--> 실패시 권한 거부 
+-> 실패시 권한 거부하여 반환한다 
+
+이러한 작업을 CsrfFilter 가 담당하여 Csrf 공격을 방어한다 
 
 
-
+---
 
 <br>
 
