@@ -198,6 +198,7 @@ protected void doFilterInternal(HttpServletRequest request, HttpServletResponse 
 
 - DeferredCsrfToken 의 구현체는 RepositoryDeferredCsrfToken 이다
 - 실제 토큰을 가지고 있으며, get() 하는 시점에 실제 토큰을 가져온다 
+  - 토큰을 가져올 때 없으면 생성하여 저장소(쿠키 or 세션)에 저장한다 
 - csrfTokenRepository 는 기본적으로 세션을 사용한다 
 
 ```java
@@ -309,6 +310,8 @@ POST,DELETE 등 요청인 경우 실행된다고 볼 수 있다.
 
 <br>
 
+#### HTML 페이지에 토큰을 자동으로 삽입되는 이유
+
 그럼 클라이언트는 해당 토큰을 언제 받을까, 만약 인증이 필요한 경우, 로그인 페이지로 갈때, 다음 로직을 거친다
 
 [DefaultLoginPageConfigurer.class]
@@ -324,10 +327,11 @@ private Map<String, String> hiddenInputs(HttpServletRequest request) {
 }
 ```
 
-
 <br>
 
-#### 3-2. CSRF 토큰 쿠키에 저장 
+---
+
+#### CSRF 토큰을 쿠키에 저장 
 - 기본적으로 세션에 저장되지만, 쿠키에 저장하도록 변경 가능 
 
 ```java
@@ -347,6 +351,8 @@ SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
 - csrfTokenRequestHandler() 로 핸들러도 교체할 수 있다
 
 <br>
+
+---
 
 ### Samesite 속성 
 
