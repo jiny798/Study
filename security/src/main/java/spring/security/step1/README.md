@@ -2,6 +2,8 @@
 - spring boot 3.2.8
 - Open JDK 17
 
+gradle 사용하는 경우, 다음과 같이 의존성을 추가할 수 있다
+
 ```declarative
 implementation 'org.springframework.boot:spring-boot-starter-security'
 implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -9,24 +11,25 @@ implementation 'org.springframework.boot:spring-boot-starter-web'
 
 --------------------------
 ### 초기화 작업
-스프링 시큐리티 라이브러리를 추가하면, 별도의 설정없이 기본적인 웹 보안 기능이 작동된다.
+위의 시큐리티 라이브러리를 추가하면, 별도의 설정없이 기본적인 웹 보안 기능이 작동된다.
 
 [웹 보안 기능]
 - 기본적으로 모든 요청에 대해 인증 여부를 검사하고, 인증이 되어야 자원 접근이 가능하도록 한다
-- 인증(로그인) 방식은 Form, httpBasic 2가지를 제공한다
+- 인증(로그인) 방식 2가지 제공  >>>  Form, httpBasic 2가지 제공
 - 인증을 할 수 있는 로그인 페이지가 제공된다
 - 인증 승인을 위한 기본 계정이 제공된다
-  - SecurityProperties 클래스에서 설정됨 (username : user, password : 랜덤문자열 )
+  - SecurityProperties 클래스에서 미리 설정됨 
+  - (username : user, password : 랜덤문자열 )
 
 
------------------------------------------------------
+---
 
 ### 보안 설정 클래스
 
-기본적인 웹 보안 기능은 어떤 클래스에서 담당하는지 확인한다
+기본적인 보안 설정은 어디에서 설정을 해주는걸까?
 
-시큐리티 내부에 SpringBootWebSecurityConfiguration 클래스가 "기본 보안 설정 클래스(HttpSecurity)"를 생성하게 되고,
-해당 설정 클래스 덕분에 우리의 시스템에 기본적인 보안 기능이 연동되는 것이다.
+SpringBootWebSecurityConfiguration 가 바로 기본 보안을 설정하는 클래스를 생성하는 클래스이다.
+
 
 __그럼 SpringBootWebSecurityConfiguration 내부를 보자__
 
@@ -46,16 +49,18 @@ static class SecurityFilterChainConfiguration {
 }
 
 ```
-- 먼저 HttpSecurity를 주입받아 사용한 뒤, SecurityFilterChain 를 반환하는 것을 볼 수 있다
-- 즉 http를 통해 요청에 대한 보안 처리, 로그인 방식 등 보안 기능을 추가하고, http.build() 를 통해 SecurityFilterChain 을 반환한다
+- HttpSecurity를 주입받아 보안을 설정을 하고, SecurityFilterChain 를 반환하는 것을 볼 수 있다
+
 - SecurityFilterChain 이 바로 기본 보안 설정 클래스이며 해당 클래스에 어떤 보안 기능이 작동해야하는지 다양한 필터들로 구성되어 있다.
-- **그리고 해당 필터들로 인해 기본적인 보안 기능이 연계되어 작동하는 것이다**
+  - **그리고 해당 필터들로 인해 기본적인 보안 기능이 연계되어 작동하는 것이다**
 
 -------------------------
 <br>
 
-__그럼 SecurityFilterChainConfiguration에 적용된 @ConditionalOnDefaultWebSecurity는 뭘까 ?__
-- @ConditionalOnDefaultWebSecurity 은 해당 메서드가 실행되기 위한 조건이다.
+<details>
+  <summary> 부록 : SecurityFilterChainConfiguration에 적용된 @ConditionalOnDefaultWebSecurity는 뭘까</summary>
+
+@ConditionalOnDefaultWebSecurity 은 해당 메서드가 실행되기 위한 조건이다.
 
 #### @ConditionalOnDefaultWebSecurity
 ```java
@@ -94,18 +99,25 @@ class DefaultWebSecurityCondition extends AllNestedConditions {
 - ConditionalOnMissingBean 는 설정된 클래스를 직접 생성하지 않았다면 true 가 반환된다
 - 모두 참이면 위에서 언급한 defaultSecurityFilterChain 메서드를 실행할 수 있다
 
+
+</details>
+
+
+
 ---------------------------
 <br>
 
-### 초기화 작업
+### 초기화 작업을 하는 SecurityBuilder 와 SecurityConfigurer
 
 앱 실행 시, 인증,인가 초기화 관련 설정을 하는 인터페이스는 SecurityBuilder 와 SecurityConfigurer 가 있다.
 
 - SecurityBuilder 는 웹 보안을 구성하는 클래스를 생성하며, 구현체로 WebSecurity, HttpSecurity, AuthenticationManagerBuilder 가 존재
 - SecurityConfigurer 는 HTTP 요청에 관한 보안처리를 담당하는 필터를 생성하고, 초기화 설정을 돕는다 (구현체는 SecurityContextConfigurer, FormLoginConfigurer, CsrfConfigurer 등)
   - 시큐리티는 필터 기반의 보안 프레임워크이므로 필터는 중요하다 
+
+[정리]
 - SecurityBuilder(HttpSecurity) 가 (SecurityConfigurer)SecurityConfigurer 를 참조하며(사용하며)
-- **즉 SecurityBuilder에 의해서 SecurityConfigurer 를 통해 인증/인가 초기화 작업을 진행한다고 볼 수 있다**
+SecurityConfigurer 를 통해 인증/인가 초기화 작업을 진행한다고 볼 수 있다**
 
 <br>
 
@@ -114,7 +126,7 @@ class DefaultWebSecurityCondition extends AllNestedConditions {
 ![img_3.png](img_3.png)
 - 자동 설정(AutoConfiguration)에 의해 Builder 를 생성한다
 - 빌더는 설정 클래스인 Configurer 를 생성한다
-- 이후 Configurer 의 init, configurer 메서드를 호출 하여, 초기화 작업을 수행한다 
+- 이후 Configurer 의 init, configurer 메서드를 호출 하여, 초기화 작업을 수행한다  (필터 생성 등)
 
 
 <br>
@@ -130,25 +142,10 @@ class DefaultWebSecurityCondition extends AllNestedConditions {
 
 <br>
 
--------------------------
-
-<br>
-
-### 초기화 구체적인 순서를 다시 정리하면 다음과 같다
-
-1. AutoConfiguration 의 build() 를 통해 빌더 클래스(SecurityBuilder) 생성
-    - HttpSecurity(SecurityBuilder 를 상속받은) 객체 생성
-2. HttpSecurity 가 SecurityConfigurer 타입의 설정 클래스를 생성
-    - FormLoginConfigurer, HttpBasicConfigurer, PasswordManagementConfigurer ... 등 생성
-    - SecurityConfigurer 는 init(SecurityBuilder b), configurer(SecurityBuilder b) 메서드를 가지고 있다
-3. 설정 클래스는 init(SecurityBuilder b), configurer(SecurityBuilder b) 를 사용해서 필터 생성과 초기화 작업을 진행
-    - 인자로 HttpSecurity(SecurityBuilder 타입)가 전달된다
-    - init, configurer 안에서 각종 보안 필터들을 생성한다.
-
-### 그럼 초기화 과정을 디버깅 해보자
+### 초기화 과정을 디버깅 해보자
 
 ### HttpSecurityConfiguration class 부터 시작 
-주석에 번호 따라가기 
+주석 번호 참조 
 
 ```java
 // HttpSecurityConfiguration class
