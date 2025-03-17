@@ -5,7 +5,7 @@
 ### 서블릿 컨테이너
 [웹 애플리케이션 서버의 구조]
 
-![img.png](image/img.png)
+<img src="image/img.png" width="70%" height="70%">
 
 - HTTP 요청 메시지를 기반으로 웹서버에서 request 객체를 생성한다.
 - 서블릿에서 로직을 처리하고, response 객체에 응답 정보를 추가한다.
