@@ -1,7 +1,11 @@
 ## Java 
 <details>
-  <summary>  JAVA 고급 1편 (멀티스레드와 동시성)  </summary>
+  <summary>  JAVA 고급 1편 정리 (멀티스레드와 동시성) </summary>
+
+  [강의 링크](https://www.inflearn.com/course/%EA%B9%80%EC%98%81%ED%95%9C%EC%9D%98-%EC%8B%A4%EC%A0%84-%EC%9E%90%EB%B0%94-%EA%B3%A0%EA%B8%89-1?srsltid=AfmBOoopFIymb5GXxwQwgaWfnnYMHdJCMjOL2XErc8Qmxg-tsJ6Vm6EB)
+  
 - [스레드 생성과 실행](https://github.com/jiny798/Study/tree/main/java-ad-first/src/stage2/README.md)
+- [스레드 제어와 생명 주기](https://github.com/jiny798/Study/tree/main/java-ad-first/src/stage3/README.md)
 
 
 </details>
@@ -11,7 +15,7 @@
 ## Spring Study
 
 <details>
-  <summary>  인프런 스프링 로드맵 [김영한 스프링 로드맵] </summary>
+  <summary>  인프런 스프링 로드맵 정리 [김영한 스프링 로드맵] </summary>
 
 - [MVC 프레임워크 만들기](https://github.com/jiny798/Study/blob/main/mvc-framework/README.md)
 - [데이터 전송 GET(Query-parameter) , POST(FORM), JSON](https://github.com/jiny798/Study/blob/main/mvc-study/src/main/java/hello/itemservice/subject/request_response/basic/README.md)
