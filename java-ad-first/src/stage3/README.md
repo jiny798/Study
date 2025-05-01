@@ -121,3 +121,55 @@
 
 6. Terminated (종료)
    - 스레드의 실행이 완료된 상태 
+
+<br>
+<br>
+
+### 인터럽트 
+
+반복되는 작업을 새로운 스레드에서 실행하고
+메인에서 interrupt() 를 호춣하는 예제
+
+```java
+
+public static void main(String[] args) {
+   MyTask task = new MyTask();
+   Thread thread = new Thread(task, "work");
+   thread.start();
+
+   sleep(1000);
+
+   log("작업 중단 지시 - thread.interrupt()");
+   thread.interrupt();
+   log("work 스레드 인터럽트 상태1 = " + thread.isInterrupted());
+}
+
+    static class MyTask implements Runnable {
+        @Override
+        public void run() {
+            
+            // 1. 인터럽트 상태 체크 
+            while (!Thread.interrupted()) { 
+                log("작업 중");
+            }
+            log("work 스레드 인터럽트 상태2 = " + Thread.currentThread().isInterrupted());
+
+            try {
+                log("자원 정리 시도");
+                Thread.sleep(1000);
+                log("자원 정리 완료");
+            } catch (InterruptedException e) {
+                log("자원 정리 실패 - 자원 정리 중 인터럽트 발생");
+                log("work 스레드 인터럽트 상태3 = " +
+                        Thread.currentThread().isInterrupted());
+            }
+            log("작업 종료");
+        }
+    }
+
+```
+
+- 메인에서 interrupt() 를 호출하면, MyTask 내부의 Thread.interrupted() 는 true 가 된다
+- 그리고 다시 인터럽트 상태를 false 로 변경한다 
+- Thread.isInterrupted() 를 사용하면 interrupt() 호출 시, true 를 반환하지만 인터럽트를 변경하지 않는다
+  - 주의해서 사용 필요 
