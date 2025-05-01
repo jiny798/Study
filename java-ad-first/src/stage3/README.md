@@ -173,3 +173,4 @@ public static void main(String[] args) {
 - 그리고 다시 인터럽트 상태를 false 로 변경한다 
 - Thread.isInterrupted() 를 사용하면 interrupt() 호출 시, true 를 반환하지만 인터럽트를 변경하지 않는다
   - 주의해서 사용 필요 
+- 인터럽트를 활용한 프린터 예제는 MyPrinter.java 파일 참고 
