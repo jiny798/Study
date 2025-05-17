@@ -171,6 +171,6 @@ public static void main(String[] args) {
 
 - 메인에서 interrupt() 를 호출하면, MyTask 내부의 Thread.interrupted() 는 true 가 된다
 - 그리고 다시 인터럽트 상태를 false 로 변경한다 
-- Thread.isInterrupted() 를 사용하면 interrupt() 호출 시, true 를 반환하지만 인터럽트를 변경하지 않는다
+- Thread.isInterrupted() 를 사용하면 interrupt() 호출 시, true 를 반환하지만 인터럽트 상태를 변경하지 않는다
   - 주의해서 사용 필요 
 - 인터럽트를 활용한 프린터 예제는 MyPrinter.java 파일 참고 
