@@ -1,6 +1,5 @@
 ### 예제 
 
-
 MyTask 는 내부 변수 runFlag 가 false 가 될때까지 계속 while 문을 실행하는 역할
 
 MyTask 를 스레드로 실행시키고, 1초뒤 runFlag 를 false 를 시키면
